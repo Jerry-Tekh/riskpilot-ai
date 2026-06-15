@@ -1,13 +1,20 @@
 import { prisma } from "../src/db.js";
 import { scoreTrade } from "../src/engines/scoring.js";
 import { assessRisk } from "../src/engines/risk.js";
-import { openPosition, evaluatePosition } from "../src/engines/simBroker.js";
+import { openPosition, evaluatePosition, computePnl } from "../src/engines/simBroker.js";
+
+const HOLD_DAYS = 8; // max holding period — positions cycle instead of accumulating forever
 
 const SYMBOLS = {
-  BTCUSDT: { price: 60000, atr: 1200, drift: 0.0008, vol: 0.02 },
-  ETHUSDT: { price: 3200, atr: 95, drift: 0.0006, vol: 0.025 },
-  DOGEUSDT: { price: 0.15, atr: 0.02, drift: -0.0002, vol: 0.06 },
+  BTCUSDT: { price: 60000, atr: 1500, drift: 0.0001, vol: 0.052, phase: 0.0, regime: 0.018 },
+  ETHUSDT: { price: 3200, atr: 130, drift: 0.0000, vol: 0.060, phase: 2.1, regime: 0.022 },
+  DOGEUSDT: { price: 0.15, atr: 0.02, drift: -0.0008, vol: 0.110, phase: 4.2, regime: 0.030 },
 };
+
+// Slow bull/bear oscillation over the 90-day window → sustained trends, real drawdowns.
+function regimeDrift(cfg, day) {
+  return Math.sin((day / 90) * Math.PI * 4 + cfg.phase) * cfg.regime;
+}
 
 // Deterministic pseudo-random (seeded) so seed is reproducible.
 function rng(seed) {
@@ -43,7 +50,7 @@ async function main() {
   for (let day = 0; day < 90; day++) {
     const when = new Date(start + day * 864e5);
     for (const [sym, cfg] of Object.entries(SYMBOLS)) {
-      prices[sym] *= 1 + cfg.drift + (rand() - 0.5) * cfg.vol;
+      prices[sym] *= 1 + cfg.drift + regimeDrift(cfg, day) + (rand() - 0.5) * cfg.vol;
       const price = +prices[sym].toFixed(sym === "DOGEUSDT" ? 5 : 2);
       const ctx = ctxFrom(sym, price, cfg.atr, rand);
       const decision = scoreTrade(ctx);
@@ -67,13 +74,20 @@ async function main() {
         await prisma.trade.create({ data: { positionId: row.id, action: "OPEN", price, size: risk.maxPositionSize, reason: "seed open", source: "agent", createdAt: when } });
       }
 
-      // Evaluate existing opens against today's price (monitor simulation)
+      // Evaluate existing opens against today's price (monitor simulation): SL/TP first, then max-holding-period exit
       for (const p of await prisma.position.findMany({ where: { status: "OPEN", symbol: sym } })) {
         const ev = evaluatePosition(p, price);
+        const ageDays = Math.floor((when.getTime() - new Date(p.openedAt).getTime()) / 864e5);
+        let close = null;
         if (ev.action === "CLOSE") {
-          equity += ev.pnl; peak = Math.max(peak, equity);
-          await prisma.position.update({ where: { id: p.id }, data: { status: "CLOSED", exitPrice: ev.exitPrice, exitReason: ev.reason, pnl: ev.pnl, closedAt: when } });
-          await prisma.trade.create({ data: { positionId: p.id, action: "CLOSE", price: ev.exitPrice, size: p.size, reason: ev.reason, source: "monitor", createdAt: when } });
+          close = { exitPrice: ev.exitPrice, reason: ev.reason, pnl: ev.pnl };
+        } else if (ageDays >= HOLD_DAYS) {
+          close = { exitPrice: price, reason: "auto-closed: max holding period", pnl: computePnl(p, price) };
+        }
+        if (close) {
+          equity += close.pnl; peak = Math.max(peak, equity);
+          await prisma.position.update({ where: { id: p.id }, data: { status: "CLOSED", exitPrice: close.exitPrice, exitReason: close.reason, pnl: close.pnl, closedAt: when } });
+          await prisma.trade.create({ data: { positionId: p.id, action: "CLOSE", price: close.exitPrice, size: p.size, reason: close.reason, source: "monitor", createdAt: when } });
         }
       }
     }

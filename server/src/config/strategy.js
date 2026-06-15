@@ -12,14 +12,14 @@ export const THRESHOLDS = {
   scoreFloor: 50,          // below → REJECT
   minRewardRisk: 1.5,      // below → REJECT
   extremeVolScore: 90,     // above → REJECT
-  symbolExposureCap: 0.40, // fraction of equity per symbol → MODIFY
+  symbolExposureCap: 0.25, // fraction of equity per symbol → MODIFY (≤75% total across 3 symbols)
   maxDrawdown: 0.20,       // 20% account drawdown → REJECT all new
   crowdedFunding: 80,      // funding score above + weak trend → MODIFY/REJECT
   weakTrend: 55,
 };
 
 export const RISK_SIZING = {
-  baseFraction: 0.10,      // 10% of equity at Low risk
+  baseFraction: 0.06,      // 6% of equity at Low risk (keeps total book conservatively leveraged)
   riskMultiplier: { Low: 1.0, Medium: 0.6, High: 0.3, Extreme: 0.0 },
 };
 
