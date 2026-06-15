@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model MarketSnapshot {
+  id        String   @id @default(cuid())
+  symbol    String
+  payload   Json
+  source    String
+  createdAt DateTime @default(now())
+}
+
+model Decision {
+  id            String     @id @default(cuid())
+  symbol        String
+  intent        String
+  direction     String
+  tradeScore    Int
+  confidence    String
+  riskLevel     String
+  verdict       String
+  vetoes        Json
+  reasoning     String
+  marketContext Json
+  createdAt     DateTime   @default(now())
+  positions     Position[]
+}
+
+model Position {
+  id         String    @id @default(cuid())
+  decisionId String?
+  decision   Decision? @relation(fields: [decisionId], references: [id])
+  symbol     String
+  side       String
+  entryPrice Float
+  size       Float
+  stopLoss   Float
+  takeProfit Float
+  status     String    @default("OPEN")
+  exitPrice  Float?
+  exitReason String?
+  pnl        Float?
+  openedAt   DateTime  @default(now())
+  closedAt   DateTime?
+  trades     Trade[]
+}
+
+model Trade {
+  id         String   @id @default(cuid())
+  positionId String
+  position   Position @relation(fields: [positionId], references: [id])
+  action     String
+  price      Float
+  size       Float
+  reason     String
+  source     String
+  createdAt  DateTime @default(now())
+}
+
+model PortfolioSnapshot {
+  id            String   @id @default(cuid())
+  equity        Float
+  exposure      Float
+  openPositions Int
+  drawdown      Float
+  riskScore     Int
+  createdAt     DateTime @default(now())
+}
