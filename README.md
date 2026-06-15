@@ -109,12 +109,15 @@ cd server && npm test
 
 ## Demo Script (≤3 min)
 
-1. **Trade Log** — open already rich with 90 days of seeded history (instant credibility).
-2. **Agent Console** — type `Trade BTC using current conditions` → the four loop steps light up → **APPROVE**, a position opens.
-3. **Agent Console** — type `Trade DOGE` → verdict card flips to **REJECT** with veto reasons. *"It just refused a trade — that's the difference."*
-4. **Risk Center** — exposure caps, drawdown guard, risk score.
-5. **Trade Log** — point to a `monitor` row: *"The agent closed this at its stop while no one was watching. No human in the loop."*
-6. **Stats header** — win rate, Sharpe, # rejected. *Verifiable evidence, runnable now.*
+1. **Trade Log** — open already rich with 90 days of seeded history (instant credibility): ~200 trades, 54 rejections, equity curve, Sharpe, drawdown.
+2. **Agent Console** — type `Trade BTC using current conditions` → the four loop steps light up → **APPROVE** (green), a position opens with SL/TP and risk-based size.
+3. **Agent Console** — type `Trade ETH` → **MODIFY** (amber): *"It still trades, but cuts the size because the book is already concentrated."*
+4. **Agent Console** — type `Trade DOGE` → verdict card flips to **REJECT** (red) with veto reasons (extreme volatility, crowded funding). *"It just refused a trade — that's the difference."*
+5. **Risk Center** — exposure caps, drawdown guard, risk score — all coherent (never over-leveraged).
+6. **Trade Log** — point to a `monitor` row: *"The agent closed this at its stop while no one was watching. No human in the loop."*
+7. **Stats header** — win rate, Sharpe, # rejected. *Verifiable evidence, runnable now.*
+
+> The three-tier verdict — **APPROVE → MODIFY → REJECT** — is the whole story: an agent that doesn't just buy, but decides *how much* or *whether at all*.
 
 ---
 
