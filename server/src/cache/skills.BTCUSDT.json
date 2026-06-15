@@ -1,0 +1,10 @@
+{
+  "trend": { "label": "Bullish", "score": 78 },
+  "momentum": { "label": "Strong", "score": 71 },
+  "volatility": { "label": "High", "score": 60 },
+  "sentiment": { "label": "Neutral", "score": 52 },
+  "funding": { "label": "Elevated", "score": 38 },
+  "newsImpact": { "label": "Medium", "score": 60, "blackout": false, "headlines": ["ETF inflows steady", "Fed holds rates"] },
+  "price": 64000,
+  "atr": 1200
+}

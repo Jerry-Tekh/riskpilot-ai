@@ -1,0 +1,10 @@
+{
+  "trend": { "label": "Bullish", "score": 66 },
+  "momentum": { "label": "Moderate", "score": 58 },
+  "volatility": { "label": "Medium", "score": 48 },
+  "sentiment": { "label": "Positive", "score": 64 },
+  "funding": { "label": "Normal", "score": 30 },
+  "newsImpact": { "label": "Low", "score": 75, "blackout": false, "headlines": ["Dencun upgrade smooth"] },
+  "price": 3400,
+  "atr": 95
+}

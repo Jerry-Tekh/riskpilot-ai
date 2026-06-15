@@ -1,0 +1,10 @@
+{
+  "trend": { "label": "Choppy", "score": 44 },
+  "momentum": { "label": "Weak", "score": 35 },
+  "volatility": { "label": "Extreme", "score": 96 },
+  "sentiment": { "label": "Greedy", "score": 82 },
+  "funding": { "label": "Crowded", "score": 88 },
+  "newsImpact": { "label": "High", "score": 30, "blackout": false, "headlines": ["Influencer pump warning"] },
+  "price": 0.16,
+  "atr": 0.02
+}
