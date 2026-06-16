@@ -61,10 +61,10 @@ body::after {
   content: "";
   position: fixed; inset: -25%; z-index: 0; pointer-events: none;
   background:
-    radial-gradient(38% 38% at 28% 30%, rgba(47,227,198,.12), transparent 60%),
-    radial-gradient(42% 42% at 76% 68%, rgba(74,168,255,.10), transparent 62%),
-    radial-gradient(30% 30% at 60% 12%, rgba(124,92,255,.06), transparent 60%);
-  filter: blur(38px);
+    radial-gradient(38% 38% at 26% 28%, rgba(47,227,198,.13), transparent 60%),
+    radial-gradient(44% 44% at 78% 70%, rgba(33,140,120,.10), transparent 62%),
+    radial-gradient(30% 30% at 62% 10%, rgba(74,168,255,.06), transparent 60%);
+  filter: blur(40px);
   animation: aurora 26s ease-in-out infinite alternate;
   will-change: transform, opacity;
 }
