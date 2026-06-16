@@ -2,6 +2,7 @@ import { useState } from "react";
 import { runLoop } from "../api/client";
 import LoopSteps from "../components/LoopSteps";
 import VerdictCard from "../components/VerdictCard";
+import DeepAnalysis from "../components/DeepAnalysis";
 import SignalGauge from "../components/SignalGauge";
 import AdapterBadge from "../components/AdapterBadge";
 import CoinIcon from "../components/CoinIcon";
@@ -89,6 +90,7 @@ export default function Console() {
       )}
 
       <VerdictCard result={result} />
+      {result && <DeepAnalysis symbol={result.symbol} />}
 
       {!ctx && !busy && (
         <div className="panel ticks" style={{ textAlign: "center", padding: "40px 20px", color: "var(--muted)" }}>

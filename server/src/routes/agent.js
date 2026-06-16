@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { prisma } from "../db.js";
-import { runLoop, buildContext, decide } from "../orchestrator.js";
+import { runLoop, buildContext, decide, deepAnalysis } from "../orchestrator.js";
 import { getPortfolioState } from "../portfolioState.js";
 
 const r = Router();
@@ -18,6 +18,14 @@ r.post("/analyze", async (req, res) => {
     const portfolio = await getPortfolioState();
     const result = await decide(ctx, portfolio, `Analyze ${ctx.symbol}`);
     res.json({ context: ctx, result });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+r.post("/deep-analysis", async (req, res) => {
+  try {
+    const symbol = (req.body.symbol || "BTCUSDT").toUpperCase();
+    const portfolio = await getPortfolioState();
+    res.json(await deepAnalysis(symbol, portfolio));
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 

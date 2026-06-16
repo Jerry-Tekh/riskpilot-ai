@@ -1,6 +1,6 @@
 import { getSkills } from "./adapters/skillHub.js";
 import { placeSimOrder } from "./adapters/agentHub.js";
-import { narrate } from "./adapters/qwen.js";
+import { narrate, deepAnalyze } from "./adapters/qwen.js";
 import { scoreTrade } from "./engines/scoring.js";
 import { assessRisk } from "./engines/risk.js";
 import { openPosition } from "./engines/simBroker.js";
@@ -35,6 +35,22 @@ export async function decide(ctx, portfolio, intent) {
     },
   });
   return { ...decision, ...risk, intent, reasoning, marketContext: ctx };
+}
+
+// On-demand deep-reasoning analysis for a symbol (does not execute or persist).
+export async function deepAnalysis(symbol, portfolio) {
+  const ctx = await buildContext(symbol);
+  const decision = scoreTrade(ctx);
+  const risk = assessRisk({ ctx, decision, portfolio });
+  const result = await deepAnalyze({
+    symbol, decision, risk,
+    market: {
+      trend: ctx.trend, momentum: ctx.momentum, volatility: ctx.volatility,
+      sentiment: ctx.sentiment, funding: ctx.funding, newsImpact: ctx.newsImpact,
+      indicators: ctx.indicators || undefined, dataSource: ctx.dataSource,
+    },
+  });
+  return { symbol, verdict: risk.verdict, dataSource: ctx.dataSource, ...result };
 }
 
 export function parseSymbol(command) {

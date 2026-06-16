@@ -14,3 +14,4 @@ export const getPortfolioHistory = () => api.get("/api/portfolio/history").then(
 export const getDecisions = () => api.get("/api/decisions").then((r) => r.data);
 export const getStats = () => api.get("/api/stats").then((r) => r.data);
 export const getMetrics = () => api.get("/api/metrics").then((r) => r.data);
+export const deepAnalysis = (symbol) => api.post("/api/agent/deep-analysis", { symbol }, { timeout: 45000 }).then((r) => r.data);

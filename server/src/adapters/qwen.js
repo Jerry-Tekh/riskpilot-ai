@@ -46,3 +46,42 @@ export async function narrate(payload, timeoutMs = 12000) {
     return template(payload);
   }
 }
+
+const DEEP_SYSTEM = `You are RiskPilot's senior market strategist. A deterministic risk engine has produced a verdict for a crypto trade. Write a structured deep-dive analysis (the engine's verdict is final — you explain and contextualize it, never override it).
+Use this exact markdown structure with these headers:
+## Market Read
+## Signal Breakdown
+## Risk Assessment
+## Verdict Rationale
+Be specific and quantitative — cite the trend, RSI, MACD, volatility, funding, reward:risk, and any vetoes by name. 4 short sections, ~2 sentences each. Professional desk-analyst tone.`;
+
+async function liveDeep(payload) {
+  const key = process.env.QWEN_API_KEY;
+  if (!key) throw new Error("no qwen key");
+  const res = await fetch(`${process.env.QWEN_BASE_URL}/chat/completions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+    body: JSON.stringify({
+      model: process.env.QWEN_MODEL || "qwen3.6-flash",
+      temperature: 0.5,
+      max_tokens: 700,
+      enable_thinking: true, // full reasoning ON — this is the deliberate "deep think" path
+      messages: [
+        { role: "system", content: DEEP_SYSTEM },
+        { role: "user", content: JSON.stringify(payload) },
+      ],
+    }),
+  });
+  if (!res.ok) throw new Error(`qwen ${res.status}`);
+  const data = await res.json();
+  const text = data.choices?.[0]?.message?.content?.trim();
+  if (!text) throw new Error("empty");
+  return { analysis: text, model: data.model || process.env.QWEN_MODEL, tokens: data.usage?.total_tokens ?? null };
+}
+
+export async function deepAnalyze(payload, timeoutMs = 40000) {
+  return Promise.race([
+    liveDeep(payload),
+    new Promise((_, rej) => setTimeout(() => rej(new Error("deep analysis timed out")), timeoutMs)),
+  ]);
+}
