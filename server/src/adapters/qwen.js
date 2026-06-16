@@ -21,8 +21,10 @@ async function liveNarrate(payload) {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
     body: JSON.stringify({
-      model: process.env.QWEN_MODEL || "qwen3.6-plus",
+      model: process.env.QWEN_MODEL || "qwen3.6-flash",
       temperature: 0.4,
+      max_tokens: 160,
+      enable_thinking: false, // ~23x fewer tokens + ~3x faster; we only need to explain, not reason
       messages: [
         { role: "system", content: SYSTEM },
         { role: "user", content: JSON.stringify(payload) },
@@ -34,7 +36,7 @@ async function liveNarrate(payload) {
   return data.choices?.[0]?.message?.content?.trim() || template(payload);
 }
 
-export async function narrate(payload, timeoutMs = 6000) {
+export async function narrate(payload, timeoutMs = 12000) {
   try {
     return await Promise.race([
       liveNarrate(payload),

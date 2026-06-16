@@ -22,14 +22,20 @@ export default function Console() {
 
   async function run(cmd) {
     const c = cmd ?? command;
-    setBusy(true); setResult(null); setError(null); setActive(-1); setCtx(null);
+    setBusy(true); setResult(null); setError(null); setCtx(null); setActive(0);
+    // Advance the first 3 stages while the request is in flight (the agent is "thinking").
+    let step = 0;
+    const timer = setInterval(() => { step = Math.min(step + 1, 2); setActive(step); }, 1100);
     try {
       const data = await runLoop(c);
+      clearInterval(timer);
       const r = data.result; const mc = r.marketContext;
       setCtx(mc);
-      for (let i = 0; i < 4; i++) { await new Promise((res) => setTimeout(res, 480)); setActive(i); }
+      setActive(3);
+      await new Promise((res) => setTimeout(res, 500));
       setResult({ ...r, symbol: mc.symbol });
     } catch (e) {
+      clearInterval(timer);
       setError(e?.response?.data?.error || e.message); setActive(-1);
     } finally { setBusy(false); }
   }
