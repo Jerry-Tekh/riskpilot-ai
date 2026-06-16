@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import Brand from "./Brand";
-import { getHealth } from "../api/client";
+import { getHealth, getMetrics } from "../api/client";
 
 const TABS = [
   { to: "/", label: "Console", end: true },
@@ -12,11 +12,13 @@ const TABS = [
 
 export default function TopBar() {
   const [online, setOnline] = useState(false);
+  const [metrics, setMetrics] = useState(null);
   useEffect(() => {
     let alive = true;
     const ping = () => getHealth().then(() => alive && setOnline(true)).catch(() => alive && setOnline(false));
-    ping();
-    const id = setInterval(ping, 15000);
+    const pull = () => getMetrics().then((m) => alive && setMetrics(m)).catch(() => {});
+    ping(); pull();
+    const id = setInterval(() => { ping(); pull(); }, 8000);
     return () => { alive = false; clearInterval(id); };
   }, []);
 
@@ -56,9 +58,30 @@ export default function TopBar() {
               {t.label}
             </NavLink>
           ))}
+          {metrics && <MetricsTicker m={metrics} />}
         </nav>
       </div>
     </header>
+  );
+}
+
+function MetricsTicker({ m }) {
+  const items = [
+    ["Loops", m.session.agentLoops],
+    ["Bitget API", m.session.bitgetApiCalls],
+    ["Decisions", m.totals.decisions],
+    ["Rejections", m.totals.rejections],
+    ["Auto-closes", m.totals.monitorCloses],
+  ];
+  return (
+    <div style={{ marginLeft: "auto", display: "flex", gap: 16, alignItems: "center", paddingBottom: 6 }}>
+      {items.map(([k, v]) => (
+        <div key={k} style={{ textAlign: "right", lineHeight: 1 }}>
+          <span className="num" style={{ fontSize: 13, color: "var(--brand)" }}>{v}</span>
+          <span className="kicker" style={{ marginLeft: 6 }}>{k}</span>
+        </div>
+      ))}
+    </div>
   );
 }
 

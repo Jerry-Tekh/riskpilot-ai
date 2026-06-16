@@ -4,14 +4,17 @@ import { narrate } from "./adapters/qwen.js";
 import { scoreTrade } from "./engines/scoring.js";
 import { assessRisk } from "./engines/risk.js";
 import { openPosition } from "./engines/simBroker.js";
+import { recordLoop, recordSource } from "./metrics.js";
 
 export async function buildContext(symbol) {
   const s = await getSkills(symbol);
+  recordSource(s.dataSource);
   return {
     symbol,
     trend: s.trend, momentum: s.momentum, volatility: s.volatility,
     sentiment: s.sentiment, funding: s.funding, newsImpact: s.newsImpact,
     price: s.price, atr: s.atr,
+    indicators: s.indicators || null,
     dataSource: s.dataSource,
     headlines: s.newsImpact?.headlines || [],
   };
@@ -20,7 +23,17 @@ export async function buildContext(symbol) {
 export async function decide(ctx, portfolio, intent) {
   const decision = scoreTrade(ctx);
   const risk = assessRisk({ ctx, decision, portfolio });
-  const reasoning = await narrate({ symbol: ctx.symbol, decision, risk });
+  const reasoning = await narrate({
+    symbol: ctx.symbol,
+    decision,
+    risk,
+    market: {
+      trend: ctx.trend, momentum: ctx.momentum, volatility: ctx.volatility,
+      sentiment: ctx.sentiment, funding: ctx.funding, newsImpact: ctx.newsImpact,
+      indicators: ctx.indicators || undefined,
+      dataSource: ctx.dataSource,
+    },
+  });
   return { ...decision, ...risk, intent, reasoning, marketContext: ctx };
 }
 
@@ -33,6 +46,7 @@ export function parseSymbol(command) {
 
 // Full loop with persistence; prisma injected for testability.
 export async function runLoop({ command, prisma, getPortfolioState }) {
+  recordLoop();
   const symbol = parseSymbol(command);
   const ctx = await buildContext(symbol);
   const portfolio = await getPortfolioState();

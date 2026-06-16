@@ -13,3 +13,4 @@ export const getPortfolio = () => api.get("/api/portfolio/summary").then((r) => 
 export const getPortfolioHistory = () => api.get("/api/portfolio/history").then((r) => r.data);
 export const getDecisions = () => api.get("/api/decisions").then((r) => r.data);
 export const getStats = () => api.get("/api/stats").then((r) => r.data);
+export const getMetrics = () => api.get("/api/metrics").then((r) => r.data);

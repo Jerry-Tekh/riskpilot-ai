@@ -6,6 +6,32 @@ import CoinIcon from "../components/CoinIcon";
 
 const SYMBOLS = ["BTCUSDT", "ETHUSDT", "DOGEUSDT"];
 
+function Indicators({ ind, price }) {
+  const rsiTone = ind.rsi == null ? "var(--muted)" : ind.rsi >= 70 ? "var(--red)" : ind.rsi <= 30 ? "var(--green)" : "var(--text)";
+  const rsiNote = ind.rsi == null ? "—" : ind.rsi >= 70 ? "Overbought" : ind.rsi <= 30 ? "Oversold" : "Neutral";
+  const macdBull = ind.macd && ind.macd.hist > 0;
+  const cross = ind.sma20 != null && ind.sma50 != null ? (ind.sma20 > ind.sma50 ? "Golden (20>50)" : "Death (20<50)") : "—";
+  const crossTone = ind.sma20 != null && ind.sma50 != null ? (ind.sma20 > ind.sma50 ? "var(--green)" : "var(--red)") : "var(--muted)";
+  const cell = (label, value, tone, note) => (
+    <div className="ticks" style={{ position: "relative", background: "var(--panel)", padding: "13px 15px" }}>
+      <div className="kicker">{label}</div>
+      <div className="num" style={{ fontSize: 19, marginTop: 5, color: tone || "var(--text)" }}>{value}</div>
+      {note && <div className="kicker dim" style={{ marginTop: 3 }}>{note}</div>}
+    </div>
+  );
+  return (
+    <div className="rise">
+      <div className="kicker" style={{ margin: "2px 2px 8px" }}>Technical Analysis · computed from Bitget candles</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--line)", border: "1px solid var(--line)" }}>
+        {cell("RSI (14)", ind.rsi ?? "—", rsiTone, rsiNote)}
+        {cell("MACD Hist", ind.macd ? ind.macd.hist : "—", macdBull ? "var(--green)" : "var(--red)", ind.macd ? (macdBull ? "Bullish" : "Bearish") : "—")}
+        {cell("SMA 20 / 50", cross, crossTone, ind.sma20 != null ? `${ind.sma20} / ${ind.sma50 ?? "—"}` : "—")}
+        {cell("Realized Vol", `${ind.realizedVolPct}%`, "var(--amber)", "daily")}
+      </div>
+    </div>
+  );
+}
+
 export default function MarketIntel() {
   const [symbol, setSymbol] = useState("BTCUSDT");
   const [ctx, setCtx] = useState(null);
@@ -36,6 +62,7 @@ export default function MarketIntel() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }} className="rise">
             {SIG.map(([label, s]) => <SignalGauge key={label} label={label} value={s.score} hint={s.label} />)}
           </div>
+          {ctx.indicators && <Indicators ind={ctx.indicators} price={ctx.price} />}
           <div className="panel ticks rise">
             <div className="panel--head"><span className="kicker">News Briefing</span><CoinIcon symbol={symbol} size={20} /></div>
             {(ctx.headlines || []).length === 0 && <div className="muted">No headlines.</div>}

@@ -1,8 +1,13 @@
 import { Router } from "express";
 import { prisma } from "../db.js";
 import { computeStats } from "../stats.js";
+import { getMetrics } from "../metrics.js";
 
 const r = Router();
+
+r.get("/metrics", async (_req, res) => {
+  res.json(await getMetrics(prisma));
+});
 
 r.get("/positions", async (req, res) => {
   const where = req.query.status ? { status: String(req.query.status).toUpperCase() } : {};

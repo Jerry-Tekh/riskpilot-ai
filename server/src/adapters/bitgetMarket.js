@@ -1,6 +1,9 @@
 // Live Bitget public market data → derived perception signals.
 // Uses free public REST endpoints (no API key). All scores normalized to 0..100.
 
+import { sma, rsi, macd, realizedVol } from "../engines/indicators.js";
+import { recordBitgetCall } from "../metrics.js";
+
 const BASE = "https://api.bitget.com";
 const clamp = (n, lo = 0, hi = 100) => Math.max(lo, Math.min(hi, n));
 
@@ -12,11 +15,12 @@ async function fetchJson(url, timeoutMs = 4000) {
   if (!res.ok) throw new Error(`bitget ${res.status}`);
   const json = await res.json();
   if (json.code && json.code !== "00000") throw new Error(`bitget ${json.code}: ${json.msg}`);
+  recordBitgetCall();
   return json.data;
 }
 
 // Candle row: [ts, open, high, low, close, baseVol, quoteVol, usdtVol], oldest→newest.
-async function getCandles(symbol, limit = 30) {
+async function getCandles(symbol, limit = 100) {
   const rows = await fetchJson(`${BASE}/api/v2/spot/market/candles?symbol=${symbol}&granularity=1day&limit=${limit}`);
   return rows.map((r) => ({
     open: +r[1], high: +r[2], low: +r[3], close: +r[4],
@@ -40,23 +44,42 @@ export function deriveSignals(candles) {
   const recent = candles.slice(-14);
   const atr = recent.reduce((a, c) => a + (c.high - c.low), 0) / recent.length;
 
-  // Trend: last close vs simple moving average (price above/below mean)
-  const sma = closes.reduce((a, b) => a + b, 0) / closes.length;
-  const trendScore = clamp(Math.round(50 + (price / sma - 1) * 100 * 5));
+  // Real indicators
+  const sma20 = sma(closes, 20);
+  const sma50 = sma(closes, 50);
+  const rsi14 = rsi(closes, 14);
+  const macdVal = macd(closes);
+  const sd = realizedVol(closes);
 
-  // Momentum: rate of change over last 10 days
-  const past = closes[Math.max(0, closes.length - 11)];
-  const roc = price / past - 1;
-  const momentumScore = clamp(Math.round(50 + roc * 100 * 4));
+  // Trend: price vs SMA20, confirmed by SMA-cross and MACD histogram sign
+  let trendScore = 50 + (sma20 ? (price / sma20 - 1) * 100 * 5 : 0);
+  if (sma20 && sma50) trendScore += sma20 > sma50 ? 6 : -6;
+  if (macdVal) trendScore += macdVal.hist > 0 ? 6 : -6;
+  trendScore = clamp(Math.round(trendScore));
 
-  // Volatility: stddev of daily returns, normalized (≈2% daily → 36, ≈5%+ → extreme)
-  const rets = [];
-  for (let i = 1; i < closes.length; i++) rets.push(closes[i] / closes[i - 1] - 1);
-  const mean = rets.reduce((a, b) => a + b, 0) / rets.length;
-  const sd = Math.sqrt(rets.reduce((a, b) => a + (b - mean) ** 2, 0) / rets.length);
+  // Momentum: RSI (already a 0..100 momentum oscillator); fallback to ROC
+  let momentumScore;
+  if (rsi14 != null) momentumScore = clamp(Math.round(rsi14));
+  else {
+    const past = closes[Math.max(0, closes.length - 11)];
+    momentumScore = clamp(Math.round(50 + (price / past - 1) * 400));
+  }
+
+  // Volatility: realized daily vol normalized (≈2% daily → 36, ≈5%+ → extreme)
   const volatilityScore = clamp(Math.round(sd * 100 * 18));
 
-  return { price: +price.toFixed(price < 1 ? 5 : 2), atr: +atr.toFixed(price < 1 ? 5 : 2), trendScore, momentumScore, volatilityScore };
+  const dp = price < 1 ? 5 : 2;
+  return {
+    price: +price.toFixed(dp), atr: +atr.toFixed(dp),
+    trendScore, momentumScore, volatilityScore,
+    indicators: {
+      rsi: rsi14,
+      macd: macdVal,
+      sma20: sma20 != null ? +sma20.toFixed(dp) : null,
+      sma50: sma50 != null ? +sma50.toFixed(dp) : null,
+      realizedVolPct: +(sd * 100).toFixed(2),
+    },
+  };
 }
 
 export function fundingScore(rate) {
@@ -82,5 +105,6 @@ export async function getLiveMarket(symbol) {
     funding: { label: fScore >= 80 ? "Crowded" : fScore >= 40 ? "Elevated" : "Normal", score: fScore },
     price: s.price,
     atr: s.atr,
+    indicators: s.indicators,
   };
 }

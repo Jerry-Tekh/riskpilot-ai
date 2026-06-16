@@ -6,6 +6,14 @@ function template({ symbol, decision, risk }) {
   return `Approved ${decision.direction} ${symbol}. Score ${decision.tradeScore} (${decision.confidence}), R:R ${risk.rewardRiskRatio}, SL ${risk.stopLoss}, TP ${risk.takeProfit}, risk ${risk.riskLevel}.`;
 }
 
+const SYSTEM = `You are RiskPilot, an autonomous risk-first crypto trading agent.
+A deterministic engine has ALREADY decided the verdict (APPROVE / MODIFY / REJECT), the trade score, position size, stop-loss and take-profit. Your job is ONLY to explain that decision to the trader.
+Rules:
+- NEVER change the verdict, numbers, or direction. Explain what was decided, do not re-decide.
+- Be concise: 2-3 sentences, confident and professional, like a risk desk analyst.
+- Reference the concrete evidence (trend, RSI/MACD, volatility, funding, reward:risk, any vetoes).
+- If REJECT or MODIFY, make the risk reasoning the focus — that judgment is the point.`;
+
 async function liveNarrate(payload) {
   const key = process.env.QWEN_API_KEY;
   if (!key) throw new Error("no qwen key");
@@ -14,8 +22,9 @@ async function liveNarrate(payload) {
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
     body: JSON.stringify({
       model: process.env.QWEN_MODEL || "qwen3.6-plus",
+      temperature: 0.4,
       messages: [
-        { role: "system", content: "You are RiskPilot, a risk-first trading agent. Explain the verdict in 2-3 sentences. Never change the verdict or numbers." },
+        { role: "system", content: SYSTEM },
         { role: "user", content: JSON.stringify(payload) },
       ],
     }),
