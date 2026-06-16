@@ -48,24 +48,41 @@ body {
   font-size: 14px;
   line-height: 1.5;
   background-color: var(--bg);
-  /* layered atmosphere: brand glow + secondary glow + grid + noise */
+  /* deep vertical base — ambient light is layered on pseudo-elements below */
   background-image:
-    radial-gradient(900px 520px at 78% -8%, rgba(47,227,198,.10), transparent 60%),
-    radial-gradient(760px 460px at 8% 0%, rgba(74,168,255,.07), transparent 55%),
-    linear-gradient(transparent 0 31px, rgba(38,52,74,.16) 31px 32px),
-    linear-gradient(90deg, transparent 0 31px, rgba(38,52,74,.16) 31px 32px),
+    radial-gradient(1200px 680px at 88% -12%, rgba(47,227,198,.10), transparent 62%),
+    radial-gradient(1000px 620px at 4% 108%, rgba(74,168,255,.07), transparent 58%),
     linear-gradient(180deg, var(--bg), var(--bg-2));
-  background-size: auto, auto, 32px 32px, 32px 32px, auto;
   background-attachment: fixed;
+}
+
+/* drifting aurora — feels "alive / thinking" without fighting the data */
+body::after {
+  content: "";
+  position: fixed; inset: -25%; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(38% 38% at 28% 30%, rgba(47,227,198,.12), transparent 60%),
+    radial-gradient(42% 42% at 76% 68%, rgba(74,168,255,.10), transparent 62%),
+    radial-gradient(30% 30% at 60% 12%, rgba(124,92,255,.06), transparent 60%);
+  filter: blur(38px);
+  animation: aurora 26s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+@keyframes aurora {
+  0%   { transform: translate3d(-2%, -1%, 0) scale(1);    opacity: .85; }
+  50%  { opacity: 1; }
+  100% { transform: translate3d(3%, 2%, 0) scale(1.12);   opacity: .8; }
 }
 
 /* fine grain overlay */
 body::before {
   content: "";
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  opacity: .035;
+  opacity: .04;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+
+@media (prefers-reduced-motion: reduce) { body::after { animation: none; } }
 
 #root { position: relative; z-index: 1; }
 
