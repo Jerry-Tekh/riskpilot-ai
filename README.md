@@ -1,5 +1,8 @@
 # RiskPilot AI
 
+**🔗 Live demo:** https://riskpilotai.vercel.app · **API:** https://riskpilot-ai-production.up.railway.app/api/health
+
+
 > The autonomous trading agent that decides **whether a trade should happen at all** — and is the only one that says *no*.
 
 Built for the **Bitget AI Base Camp Hackathon S1 — Track 1 (Trading Agent)**.
@@ -13,7 +16,9 @@ Most trading agents chase profit. RiskPilot evaluates **trade quality and risk**
 ## Why it stands out
 
 - **A risk-first agent that can reject trades.** Seven explicit veto rules (score floor, poor reward:risk, extreme volatility, drawdown breach, concentration, crowded funding, news blackout) — every verdict is auditable, not vibes.
-- **Deterministic decision engine + Qwen narration.** The score, verdict, sizing, and SL/TP are computed by pure, reproducible functions. Qwen 3.6 Plus only *explains* the verdict in natural language — it never changes it. That makes backtests meaningful and the agent impossible to talk into a bad trade.
+- **Deterministic decision engine + Qwen narration.** The score, verdict, sizing, and SL/TP are computed by pure, reproducible functions. Qwen 3.6 only *explains* the verdict in natural language — it never changes it. That makes backtests meaningful and the agent impossible to talk into a bad trade.
+- **Deep Analysis (on demand).** One click runs Qwen with full chain-of-thought reasoning to produce a structured market deep-dive (Market Read · Signal Breakdown · Risk Assessment · Verdict Rationale) — without slowing the core loop.
+- **Real technical analysis.** RSI, MACD, and SMA-cross are computed from live Bitget candle data, so perception is genuinely analyst-grade, not mocked.
 - **Provable autonomy.** A background risk monitor watches open positions on an interval and auto-closes them at stop-loss / take-profit **with no human in the loop** — visible in the trade log as `source: monitor`.
 - **Never breaks in a demo.** Every external call (Bitget Skills, Agent Hub, Qwen) goes through a live-first adapter with a cached fallback, so the loop always completes even if a service is down.
 - **Verifiable evidence on first load.** A seed script runs the *real* engine over 90 days of market data to produce a full track record (PnL, win rate, Sharpe, max drawdown) — which doubles as the backtest deliverable.
