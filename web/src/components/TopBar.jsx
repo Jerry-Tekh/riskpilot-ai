@@ -5,6 +5,7 @@ import { getHealth, getMetrics } from "../api/client";
 
 const TABS = [
   { to: "/", label: "Console", end: true },
+  { to: "/autopilot", label: "Autopilot" },
   { to: "/market", label: "Market Intel" },
   { to: "/risk", label: "Risk Center" },
   { to: "/log", label: "Trade Log" },

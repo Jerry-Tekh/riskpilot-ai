@@ -14,8 +14,9 @@ export default function VerdictCard({ result }) {
   if (!result) return null;
   const symbol = result.symbol || result.marketContext?.symbol;
   const v = result.verdict;
-  const color = v === "REJECT" ? "var(--red)" : v === "MODIFY" ? "var(--amber)" : "var(--green)";
-  const longShort = result.direction === "SELL" ? "var(--red)" : "var(--green)";
+  const color = v === "REJECT" ? "var(--red)" : v === "MODIFY" ? "var(--amber)" : v === "HOLD" ? "var(--blue)" : "var(--green)";
+  const noTrade = v === "REJECT" || v === "HOLD";
+  const longShort = result.direction === "SELL" ? "var(--red)" : result.direction === "HOLD" ? "var(--text-dim)" : "var(--green)";
 
   return (
     <div className="panel ticks rise" style={{
@@ -43,8 +44,8 @@ export default function VerdictCard({ result }) {
         <Metric label="Trade Score" value={result.tradeScore} accent />
         <Metric label="Confidence" value={result.confidence} />
         <Metric label="Risk Level" value={result.riskLevel} />
-        <Metric label="Reward : Risk" value={v === "REJECT" ? "—" : `${result.rewardRiskRatio}×`} />
-        {v !== "REJECT" && <>
+        <Metric label="Reward : Risk" value={noTrade ? "—" : `${result.rewardRiskRatio}×`} />
+        {!noTrade && <>
           <Metric label="Entry" value={fmt(result.marketContext?.price)} />
           <Metric label="Stop Loss" value={fmt(result.stopLoss)} tone="var(--red)" />
           <Metric label="Take Profit" value={fmt(result.takeProfit)} tone="var(--green)" />

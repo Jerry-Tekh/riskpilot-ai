@@ -1,8 +1,14 @@
+export function narrateTemplate({ symbol, decision, risk }) {
+  return template({ symbol, decision, risk });
+}
+
 function template({ symbol, decision, risk }) {
   if (risk.verdict === "REJECT")
     return `Rejected ${decision.direction} ${symbol}: ${risk.vetoes.join(", ")}. Score ${decision.tradeScore}, R:R ${risk.rewardRiskRatio}, risk ${risk.riskLevel}.`;
   if (risk.verdict === "MODIFY")
     return `Modified ${decision.direction} ${symbol}: position cut for ${risk.vetoes.join(", ")}. Score ${decision.tradeScore}, risk ${risk.riskLevel}.`;
+  if (risk.verdict === "HOLD")
+    return `Holding flat on ${symbol}: no clear directional edge (score ${decision.tradeScore}, ${decision.confidence} confidence). Staying out is the disciplined call.`;
   return `Approved ${decision.direction} ${symbol}. Score ${decision.tradeScore} (${decision.confidence}), R:R ${risk.rewardRiskRatio}, SL ${risk.stopLoss}, TP ${risk.takeProfit}, risk ${risk.riskLevel}.`;
 }
 

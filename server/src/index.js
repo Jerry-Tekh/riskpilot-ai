@@ -4,6 +4,7 @@ import { prisma } from "./db.js";
 import { startMonitor } from "./monitor.js";
 import { getSkills } from "./adapters/skillHub.js";
 import { getPortfolioState } from "./portfolioState.js";
+import { configureAutopilot } from "./autopilot.js";
 
 const port = process.env.PORT || 4000;
 
@@ -15,4 +16,5 @@ async function priceFor(symbol) {
 app.listen(port, () => {
   console.log(`RiskPilot API on :${port}`);
   startMonitor({ prisma, priceFor, getPortfolioState, intervalMs: Number(process.env.MONITOR_INTERVAL_MS) || 30000 });
+  configureAutopilot({ prisma, getPortfolioState });
 });

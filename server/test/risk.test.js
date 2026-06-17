@@ -49,6 +49,12 @@ describe("assessRisk", () => {
     expect(r.verdict).toBe("REJECT");
     expect(r.vetoes).toContain("news_blackout");
   });
+  it("HOLD direction → HOLD verdict with no position", () => {
+    const r = assessRisk(base({ decision: { tradeScore: 60, direction: "HOLD", confidence: "Low" } }));
+    expect(r.verdict).toBe("HOLD");
+    expect(r.maxPositionSize).toBe(0);
+  });
+
   it("riskLevel scales with volatility", () => {
     const hi = base(); hi.ctx.volatility.score = 88;
     expect(["High", "Extreme"]).toContain(assessRisk(hi).riskLevel);

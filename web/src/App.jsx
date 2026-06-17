@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import TopBar from "./components/TopBar";
 import Console from "./pages/Console";
+import Autopilot from "./pages/Autopilot";
 import MarketIntel from "./pages/MarketIntel";
 import RiskCenter from "./pages/RiskCenter";
 import TradeLog from "./pages/TradeLog";
@@ -12,6 +13,7 @@ export default function App() {
       <main className="wrap">
         <Routes>
           <Route path="/" element={<Console />} />
+          <Route path="/autopilot" element={<Autopilot />} />
           <Route path="/market" element={<MarketIntel />} />
           <Route path="/risk" element={<RiskCenter />} />
           <Route path="/log" element={<TradeLog />} />

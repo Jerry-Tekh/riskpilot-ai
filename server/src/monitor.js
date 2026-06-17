@@ -1,4 +1,5 @@
 import { evaluatePosition } from "./engines/simBroker.js";
+import { recordActivity } from "./activity.js";
 
 export async function tickPositions({ prisma, priceFor, getPortfolioState }) {
   const open = await prisma.position.findMany({ where: { status: "OPEN" } });
@@ -13,6 +14,7 @@ export async function tickPositions({ prisma, priceFor, getPortfolioState }) {
       await prisma.trade.create({
         data: { positionId: pos.id, action: "CLOSE", price: r.exitPrice, size: pos.size, reason: r.reason, source: "monitor" },
       });
+      recordActivity("monitor", `Auto-closed ${pos.symbol.replace("USDT", "")} · ${r.reason} · PnL ${r.pnl >= 0 ? "+" : ""}${r.pnl}`, { symbol: pos.symbol, pnl: r.pnl });
     }
   }
   const st = await getPortfolioState();

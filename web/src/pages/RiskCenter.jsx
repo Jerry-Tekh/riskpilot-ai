@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getPortfolio, getPositions, getPortfolioHistory } from "../api/client";
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 import CoinIcon from "../components/CoinIcon";
+import StressTest from "../components/StressTest";
 
 const TT = { background: "var(--panel-2)", border: "1px solid var(--line-bright)", fontFamily: "var(--mono)", fontSize: 12, color: "var(--text)" };
 
@@ -40,6 +41,8 @@ export default function RiskCenter() {
           </AreaChart>
         </ResponsiveContainer>
       </div>
+
+      <StressTest />
 
       <div className="panel ticks rise">
         <div className="panel--head"><span className="kicker">Open Positions</span><span className="kicker dim">{positions.length} active</span></div>

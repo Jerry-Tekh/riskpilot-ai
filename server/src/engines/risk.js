@@ -51,7 +51,10 @@ export function assessRisk({ ctx, decision, portfolio }) {
 
   let verdict = "APPROVE";
   if (hardReject) verdict = "REJECT";
+  else if (decision.direction === "HOLD") verdict = "HOLD"; // no directional edge → stay flat
   else if (modified) verdict = "MODIFY";
+
+  if (verdict === "HOLD") maxPositionSize = 0; // flat = no position
 
   return {
     verdict,

@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { withFallback } from "./withFallback.js";
 import { getLiveMarket } from "./bitgetMarket.js";
+import { getFearGreed } from "./sentiment.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const cacheDir = join(__dirname, "../cache");
@@ -16,15 +17,18 @@ function readCache(symbol) {
 // so we overlay live market data on top of the cached sentiment/news.
 async function liveSkills(symbol) {
   if (process.env.SKILLHUB_LIVE !== "true") throw new Error("live skills disabled (set SKILLHUB_LIVE=true)");
-  const market = await getLiveMarket(symbol);
   const cached = readCache(symbol);
-  return {
-    ...market,
-    sentiment: cached.sentiment,
-    newsImpact: cached.newsImpact,
-  };
+  // Bitget market data + live Fear & Greed sentiment, in parallel. Sentiment failure → cached.
+  const [market, fg] = await Promise.all([
+    getLiveMarket(symbol),
+    getFearGreed().catch(() => null),
+  ]);
+  const sentiment = fg
+    ? { label: fg.label, score: fg.score, source: "fear-greed" }
+    : cached.sentiment;
+  return { ...market, sentiment, newsImpact: cached.newsImpact };
 }
 
 export async function getSkills(symbol) {
-  return withFallback(() => liveSkills(symbol), () => readCache(symbol));
+  return withFallback(() => liveSkills(symbol), () => readCache(symbol), 7000);
 }

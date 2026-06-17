@@ -15,3 +15,8 @@ export const getDecisions = () => api.get("/api/decisions").then((r) => r.data);
 export const getStats = () => api.get("/api/stats").then((r) => r.data);
 export const getMetrics = () => api.get("/api/metrics").then((r) => r.data);
 export const deepAnalysis = (symbol) => api.post("/api/agent/deep-analysis", { symbol }, { timeout: 45000 }).then((r) => r.data);
+export const getScenarios = () => api.get("/api/agent/scenarios").then((r) => r.data);
+export const stressTest = (symbol, scenario) => api.post("/api/agent/stress", { symbol, scenario }, { timeout: 20000 }).then((r) => r.data);
+export const getAutopilot = () => api.get("/api/autopilot").then((r) => r.data);
+export const setAutopilot = (enabled) => api.post("/api/autopilot", { enabled }).then((r) => r.data);
+export const getActivity = (limit = 50) => api.get("/api/activity", { params: { limit } }).then((r) => r.data);

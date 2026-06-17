@@ -1,10 +1,12 @@
 import { getSkills } from "./adapters/skillHub.js";
 import { placeSimOrder } from "./adapters/agentHub.js";
-import { narrate, deepAnalyze } from "./adapters/qwen.js";
+import { narrate, narrateTemplate, deepAnalyze } from "./adapters/qwen.js";
 import { scoreTrade } from "./engines/scoring.js";
 import { assessRisk } from "./engines/risk.js";
 import { openPosition } from "./engines/simBroker.js";
 import { recordLoop, recordSource } from "./metrics.js";
+import { applyScenario } from "./engines/scenarios.js";
+import { recordActivity } from "./activity.js";
 
 export async function buildContext(symbol) {
   const s = await getSkills(symbol);
@@ -20,21 +22,27 @@ export async function buildContext(symbol) {
   };
 }
 
-export async function decide(ctx, portfolio, intent) {
+export async function decide(ctx, portfolio, intent, { quiet = false } = {}) {
   const decision = scoreTrade(ctx);
   const risk = assessRisk({ ctx, decision, portfolio });
-  const reasoning = await narrate({
-    symbol: ctx.symbol,
-    decision,
-    risk,
+  const payload = {
+    symbol: ctx.symbol, decision, risk,
     market: {
       trend: ctx.trend, momentum: ctx.momentum, volatility: ctx.volatility,
       sentiment: ctx.sentiment, funding: ctx.funding, newsImpact: ctx.newsImpact,
-      indicators: ctx.indicators || undefined,
-      dataSource: ctx.dataSource,
+      indicators: ctx.indicators || undefined, dataSource: ctx.dataSource,
     },
-  });
+  };
+  const reasoning = quiet ? narrateTemplate(payload) : await narrate(payload);
   return { ...decision, ...risk, intent, reasoning, marketContext: ctx };
+}
+
+// Stress test: apply a scenario override and return the risk engine's response. No persistence.
+export async function stressTest(symbol, scenario, basePortfolio) {
+  const liveCtx = await buildContext(symbol);
+  const { ctx, portfolio } = applyScenario(liveCtx, basePortfolio, scenario);
+  const result = await decide(ctx, portfolio, `Stress: ${scenario}`);
+  return { ...result, symbol, scenario };
 }
 
 // On-demand deep-reasoning analysis for a symbol (does not execute or persist).
@@ -61,12 +69,18 @@ export function parseSymbol(command) {
 }
 
 // Full loop with persistence; prisma injected for testability.
-export async function runLoop({ command, prisma, getPortfolioState }) {
+export async function runLoop({ command, prisma, getPortfolioState, quiet = false }) {
   recordLoop();
   const symbol = parseSymbol(command);
   const ctx = await buildContext(symbol);
   const portfolio = await getPortfolioState();
-  const result = await decide(ctx, portfolio, command);
+  const result = await decide(ctx, portfolio, command, { quiet });
+  const dirPart = result.direction === "HOLD" ? "" : ` ${result.direction}`;
+  recordActivity(
+    result.verdict === "REJECT" ? "reject" : "decision",
+    `${result.verdict}${dirPart} ${symbol.replace("USDT", "")} · score ${result.tradeScore}${result.vetoes.length ? " · " + result.vetoes.join(",") : ""}`,
+    { symbol, verdict: result.verdict, source: ctx.dataSource }
+  );
 
   const decisionRow = await prisma.decision.create({
     data: {
@@ -77,7 +91,7 @@ export async function runLoop({ command, prisma, getPortfolioState }) {
   });
 
   let position = null;
-  if (result.verdict !== "REJECT" && result.maxPositionSize > 0) {
+  if ((result.verdict === "APPROVE" || result.verdict === "MODIFY") && result.maxPositionSize > 0) {
     await placeSimOrder({ symbol, side: result.direction, size: result.maxPositionSize, price: ctx.price });
     const p = openPosition({
       symbol, side: result.direction, entryPrice: ctx.price, size: result.maxPositionSize,
@@ -87,6 +101,7 @@ export async function runLoop({ command, prisma, getPortfolioState }) {
     await prisma.trade.create({
       data: { positionId: position.id, action: "OPEN", price: ctx.price, size: result.maxPositionSize, reason: "agent open", source: "agent" },
     });
+    recordActivity("execute", `Opened ${result.direction} ${symbol.replace("USDT", "")} @ ${ctx.price} · size ${result.maxPositionSize}`, { symbol });
   }
 
   return { decision: decisionRow, position, result };

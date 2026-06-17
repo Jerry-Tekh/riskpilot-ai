@@ -19,6 +19,9 @@ Most trading agents chase profit. RiskPilot evaluates **trade quality and risk**
 - **Deterministic decision engine + Qwen narration.** The score, verdict, sizing, and SL/TP are computed by pure, reproducible functions. Qwen 3.6 only *explains* the verdict in natural language — it never changes it. That makes backtests meaningful and the agent impossible to talk into a bad trade.
 - **Deep Analysis (on demand).** One click runs Qwen with full chain-of-thought reasoning to produce a structured market deep-dive (Market Read · Signal Breakdown · Risk Assessment · Verdict Rationale) — without slowing the core loop.
 - **Real technical analysis.** RSI, MACD, and SMA-cross are computed from live Bitget candle data, so perception is genuinely analyst-grade, not mocked.
+- **Fully live perception.** Price/trend/volatility/funding from Bitget + market sentiment from the live Crypto Fear & Greed index — zero mocked inputs.
+- **🤖 Autopilot.** Engage autonomous mode and the agent scans BTC/ETH/DOGE on a cycle, runs the full loop, and trades with no human input — watch it work in a real-time activity feed.
+- **🧪 Stress Test.** Inject scenarios (volatility spike, crowded funding, drawdown breach, capitulation, news blackout) and watch the risk engine reject/reduce on demand.
 - **Provable autonomy.** A background risk monitor watches open positions on an interval and auto-closes them at stop-loss / take-profit **with no human in the loop** — visible in the trade log as `source: monitor`.
 - **Never breaks in a demo.** Every external call (Bitget Skills, Agent Hub, Qwen) goes through a live-first adapter with a cached fallback, so the loop always completes even if a service is down.
 - **Verifiable evidence on first load.** A seed script runs the *real* engine over 90 days of market data to produce a full track record (PnL, win rate, Sharpe, max drawdown) — which doubles as the backtest deliverable.
