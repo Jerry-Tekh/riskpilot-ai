@@ -25,3 +25,20 @@ export function scoreTrade(ctx) {
 
   return { tradeScore, direction, confidence };
 }
+
+// Itemized contribution of each signal to the trade score (same math as scoreTrade).
+// Returns the baseline + signed contributions that sum to the raw score, plus the clamped total.
+export function scoreBreakdown(ctx) {
+  const components = [
+    { key: "baseline", label: "Baseline", value: 50, kind: "base" },
+    { key: "trend", label: "Trend", value: +(WEIGHTS.trend * ctx.trend.score).toFixed(1), kind: "positive", signal: ctx.trend.score },
+    { key: "momentum", label: "Momentum", value: +(WEIGHTS.momentum * ctx.momentum.score).toFixed(1), kind: "positive", signal: ctx.momentum.score },
+    { key: "sentiment", label: "Sentiment", value: +(WEIGHTS.sentiment * ctx.sentiment.score).toFixed(1), kind: "positive", signal: ctx.sentiment.score },
+    { key: "volatility", label: "Volatility", value: -+(WEIGHTS.volatilityPenalty * ctx.volatility.score).toFixed(1), kind: "penalty", signal: ctx.volatility.score },
+    { key: "funding", label: "Funding", value: -+(WEIGHTS.fundingCrowdedness * ctx.funding.score).toFixed(1), kind: "penalty", signal: ctx.funding.score },
+    { key: "news", label: "News Risk", value: -+(WEIGHTS.newsRisk * (100 - ctx.newsImpact.score)).toFixed(1), kind: "penalty", signal: ctx.newsImpact.score },
+  ];
+  const raw = components.reduce((a, c) => a + c.value, 0);
+  const total = clamp(Math.round(raw));
+  return { components, raw: +raw.toFixed(1), total };
+}

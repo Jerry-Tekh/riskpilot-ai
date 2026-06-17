@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { scoreTrade } from "../src/engines/scoring.js";
+import { scoreTrade, scoreBreakdown } from "../src/engines/scoring.js";
 
 const ctx = (o = {}) => ({
   symbol: "BTCUSDT",
@@ -36,5 +36,28 @@ describe("scoreTrade", () => {
     const hi = scoreTrade(ctx({ volatility: { label: "High", score: 95 } })).tradeScore;
     const lo = scoreTrade(ctx({ volatility: { label: "Low", score: 10 } })).tradeScore;
     expect(lo).toBeGreaterThan(hi);
+  });
+});
+
+describe("scoreBreakdown", () => {
+  it("total matches scoreTrade's tradeScore", () => {
+    const c = ctx();
+    expect(scoreBreakdown(c).total).toBe(scoreTrade(c).tradeScore);
+  });
+  it("components sum to the raw score", () => {
+    const b = scoreBreakdown(ctx());
+    const sum = +b.components.reduce((a, x) => a + x.value, 0).toFixed(1);
+    expect(sum).toBe(b.raw);
+  });
+  it("positives are positive, penalties are negative, baseline is 50", () => {
+    const b = scoreBreakdown(ctx());
+    const by = Object.fromEntries(b.components.map((c) => [c.key, c]));
+    expect(by.baseline.value).toBe(50);
+    expect(by.trend.value).toBeGreaterThan(0);
+    expect(by.volatility.value).toBeLessThan(0);
+    expect(by.news.value).toBeLessThanOrEqual(0);
+  });
+  it("has all seven rows (baseline + 6 signals)", () => {
+    expect(scoreBreakdown(ctx()).components).toHaveLength(7);
   });
 });

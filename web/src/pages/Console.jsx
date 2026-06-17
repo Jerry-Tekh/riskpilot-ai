@@ -3,6 +3,7 @@ import { runLoop } from "../api/client";
 import LoopSteps from "../components/LoopSteps";
 import VerdictCard from "../components/VerdictCard";
 import DeepAnalysis from "../components/DeepAnalysis";
+import ScoreWaterfall from "../components/ScoreWaterfall";
 import SignalGauge from "../components/SignalGauge";
 import AdapterBadge from "../components/AdapterBadge";
 import CoinIcon from "../components/CoinIcon";
@@ -90,6 +91,7 @@ export default function Console() {
       )}
 
       <VerdictCard result={result} />
+      {result?.breakdown && <ScoreWaterfall breakdown={result.breakdown} />}
       {result && <DeepAnalysis symbol={result.symbol} />}
 
       {!ctx && !busy && (

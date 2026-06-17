@@ -1,7 +1,7 @@
 import { getSkills } from "./adapters/skillHub.js";
 import { placeSimOrder } from "./adapters/agentHub.js";
 import { narrate, narrateTemplate, deepAnalyze } from "./adapters/qwen.js";
-import { scoreTrade } from "./engines/scoring.js";
+import { scoreTrade, scoreBreakdown } from "./engines/scoring.js";
 import { assessRisk } from "./engines/risk.js";
 import { openPosition } from "./engines/simBroker.js";
 import { recordLoop, recordSource } from "./metrics.js";
@@ -34,7 +34,7 @@ export async function decide(ctx, portfolio, intent, { quiet = false } = {}) {
     },
   };
   const reasoning = quiet ? narrateTemplate(payload) : await narrate(payload);
-  return { ...decision, ...risk, intent, reasoning, marketContext: ctx };
+  return { ...decision, ...risk, intent, reasoning, breakdown: scoreBreakdown(ctx), marketContext: ctx };
 }
 
 // Stress test: apply a scenario override and return the risk engine's response. No persistence.
