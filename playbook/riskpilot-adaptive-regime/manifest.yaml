@@ -1,0 +1,94 @@
+name: riskpilot-adaptive-regime
+display_name: "RiskPilot Adaptive Regime"
+version: "1.0.0"
+description: "Risk-first BTC perpetual strategy: trend-follow when trending, mean-revert when ranging, stay flat when unclear"
+long_description: |
+  RiskPilot Adaptive Regime is a risk-first strategy on BTC perpetual futures
+  whose central thesis is that no single playbook fits every market, and that
+  the most reliable edge comes from refusing to trade when conditions are
+  ambiguous. Rather than forcing a directional bet at all times, it first reads
+  the prevailing regime from price action and volatility behavior, and only
+  commits capital when the market is clearly expressing one of two
+  personalities: a committed trend, or a stable range. When the read is mixed,
+  it deliberately captures nothing and waits.
+
+  In a trending regime the strategy aligns with the prevailing direction: it
+  opens long when momentum and trend point the same way upward, and opens short
+  when both point downward, accepting some entry delay in exchange for
+  confirmation. In a ranging regime it flips its personality and fades extremes
+  instead, opening long after an exhausted move to the downside and short after
+  an overstretched move to the upside. When trend strength is neither convincing
+  nor cleanly absent, it stays flat by design.
+
+  Every position carries predefined protection. The strategy exits when its
+  volatility-scaled stop is touched, when its profit target is reached, or when
+  the regime that justified the trade inverts and the original thesis is no
+  longer valid. Locking in outcomes and cutting invalidated ideas matters more
+  than insisting any single trade wins.
+
+  Subscribers can tune the trading symbol, leverage, and margin budget. Raising
+  leverage amplifies both gains and drawdowns equally and does not make the
+  strategy more selective; the margin budget is the per-strategy capital cap the
+  platform sizes orders against and uses as the denominator for return percent,
+  so treat it as the most you are willing to risk here.
+
+  The strategy can underperform during violent transitions between regimes,
+  where a trend read and a range read disagree and whipsaw the position, and
+  around gap-driven news shocks and persistent funding dislocations. Past
+  backtest performance is not a guarantee of live profitability, and real
+  execution pays slippage and fees that erode edge; only subscribe if you can
+  tolerate the drawdown and regime risk this approach carries.
+
+market_type: contract
+trading_symbols: ["BTCUSDT"]
+tags: ["adaptive", "regime", "risk-management", "trend", "mean-reversion", "btc", "contract"]
+
+decision_mode: deterministic
+backtest_support: full
+runtime_profile: deterministic
+execution_mode: signal_only
+follow_trade_supported: false
+
+strategy_config:
+  trading_symbols: ["BTCUSDT"]
+  fast_period: 12
+  slow_period: 34
+  rsi_period: 14
+  atr_period: 14
+  trend_threshold: 1.0
+  range_threshold: 0.4
+  rsi_oversold: 32
+  rsi_overbought: 68
+  sl_atr_mult: 1.5
+  tp_atr_mult: 3.0
+  trade_size: "0.01"
+  leverage: 3
+  margin_budget: "100"
+
+user_config_schema:
+  trading_symbols:
+    type: array
+    item_type: string
+    default: ["BTCUSDT"]
+    options: ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
+    aliases:
+      btc: BTCUSDT
+      bitcoin: BTCUSDT
+      eth: ETHUSDT
+    min_items: 1
+    max_items: 1
+    label: "Trading symbol"
+  leverage:
+    type: integer
+    default: 3
+    min: 1
+    max: 10
+    aliases:
+      3x: 3
+      5x: 5
+    label: "Leverage"
+  margin_budget:
+    type: string
+    default: "100"
+    pattern: "^[0-9]+(\\.[0-9]+)?$"
+    label: "Margin budget USDT"
