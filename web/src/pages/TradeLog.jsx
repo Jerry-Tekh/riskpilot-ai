@@ -3,6 +3,7 @@ import { getStats, getTrades, getDecisions, getPortfolioHistory } from "../api/c
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 import StatBar from "../components/StatBar";
 import CoinIcon from "../components/CoinIcon";
+import { api } from "../api/client";
 
 const TT = { background: "var(--panel-2)", border: "1px solid var(--line-bright)", fontFamily: "var(--mono)", fontSize: 12, color: "var(--text)" };
 const vColor = (v) => (v === "REJECT" ? "var(--red)" : v === "MODIFY" ? "var(--amber)" : "var(--green)");
@@ -21,6 +22,12 @@ export default function TradeLog() {
 
   return (
     <div className="grid" style={{ gap: 14 }}>
+      <div className="rise" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span className="kicker">Verifiable Evidence · 90-day simulated record</span>
+        <a href={`${api.defaults.baseURL}/api/trades/export.csv`} target="_blank" rel="noreferrer">
+          <button className="ghost" style={{ fontSize: 11 }}>⭳ Export trade log (CSV)</button>
+        </a>
+      </div>
       <div className="rise"><StatBar stats={stats} /></div>
 
       <div className="panel ticks rise">
