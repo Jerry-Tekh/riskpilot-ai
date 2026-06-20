@@ -4,6 +4,8 @@ The RiskPilot risk-first thesis is published as a **Bitget GetAgent Playbook**
 ("RiskPilot Adaptive Regime") and backtested on **Bitget's own managed platform**
 over real BTCUSDT perpetual data. Package source: [`playbook/riskpilot-adaptive-regime/`](../../playbook/riskpilot-adaptive-regime).
 
+**Public link:** https://www.bitget.com/en/activity/ai-get-agent/playbook/f843acbc-92db-494d-9af5-1d71b4da95ff
+
 ## Publication (confirmed by Bitget GetAgent control plane)
 
 ```json

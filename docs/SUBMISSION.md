@@ -4,7 +4,7 @@
 > - **Demo:** https://riskpilotai.vercel.app
 > - **GitHub:** https://github.com/Jerry-Tekh/riskpilot-ai
 > - **Trade log (evidence):** https://github.com/Jerry-Tekh/riskpilot-ai/blob/master/docs/evidence/trade-log-sample.csv
-> - **Bitget Playbook:** Published as **"RiskPilot Adaptive Regime"** (strategy_id `071fcb14-fca9-4ab6-9491-e8e33128a287`, v0.0.1) on GetAgent Playbook — https://www.bitget.com/en/activity/ai-get-agent/playbook · publication + backtest record: [docs/evidence/playbook-backtest.md](evidence/playbook-backtest.md)
+> - **Bitget Playbook:** Published as **"RiskPilot Adaptive Regime"** (v0.0.1) — https://www.bitget.com/en/activity/ai-get-agent/playbook/f843acbc-92db-494d-9af5-1d71b4da95ff · publication + backtest record: [docs/evidence/playbook-backtest.md](evidence/playbook-backtest.md)
 > - **Demo video:** _(add your Twitter/YouTube link)_
 
 ---
