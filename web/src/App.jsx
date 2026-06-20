@@ -22,7 +22,7 @@ export default function App() {
           <span className="kicker dim">RiskPilot AI · Bitget AI Base Camp Hackathon S1 · risk-first autonomous trading agent</span>
           <span style={{ display: "flex", gap: 16 }}>
             <a className="kicker" style={{ color: "var(--brand)" }} href="https://github.com/Jerry-Tekh/riskpilot-ai" target="_blank" rel="noreferrer">GitHub ↗</a>
-            <span className="kicker dim">Strategy published on Bitget GetAgent Playbook</span>
+            <a className="kicker" style={{ color: "var(--brand)" }} href="https://www.bitget.com/en/activity/ai-get-agent/playbook" target="_blank" rel="noreferrer">Bitget Playbook ↗</a>
           </span>
         </footer>
       </main>
