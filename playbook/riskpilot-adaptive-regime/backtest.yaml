@@ -24,10 +24,6 @@ strategy:
     sl_atr_mult: 1.5
     tp_atr_mult: 3.0
 
-execution:
-  start: "2024-01-01T00:00:00Z"
-  end: "2024-06-01T00:00:00Z"
-
 instrument:
   id: BTCUSDT.BINANCE
   kind: perpetual
