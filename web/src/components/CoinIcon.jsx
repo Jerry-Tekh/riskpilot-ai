@@ -9,7 +9,7 @@ export default function CoinIcon({ symbol, size = 22 }) {
       width={size}
       height={size}
       alt={symbol}
-      style={{ display: "block", filter: "drop-shadow(0 2px 6px rgba(0,0,0,.5))" }}
+      style={{ display: "block", filter: "drop-shadow(0 2px 5px rgba(60,48,28,.18))" }}
     />
   );
 }

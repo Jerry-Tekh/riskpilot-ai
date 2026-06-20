@@ -22,7 +22,7 @@ function Indicators({ ind, price }) {
   return (
     <div className="rise">
       <div className="kicker" style={{ margin: "2px 2px 8px" }}>Technical Analysis · computed from Bitget candles</div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--line)", border: "1px solid var(--line)" }}>
+      <div className="cards cards-4 seam">
         {cell("RSI (14)", ind.rsi ?? "—", rsiTone, rsiNote)}
         {cell("MACD Hist", ind.macd ? ind.macd.hist : "—", macdBull ? "var(--green)" : "var(--red)", ind.macd ? (macdBull ? "Bullish" : "Bearish") : "—")}
         {cell("SMA 20 / 50", cross, crossTone, ind.sma20 != null ? `${ind.sma20} / ${ind.sma50 ?? "—"}` : "—")}
@@ -59,7 +59,7 @@ export default function MarketIntel() {
 
       {!ctx ? <div className="panel" style={{ color: "var(--muted)" }}>Loading market context…</div> : (
         <>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }} className="rise">
+          <div className="cards cards-3 rise">
             {SIG.map(([label, s]) => <SignalGauge key={label} label={label} value={s.score} hint={s.label} />)}
           </div>
           {ctx.indicators && <Indicators ind={ctx.indicators} price={ctx.price} />}

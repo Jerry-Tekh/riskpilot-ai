@@ -21,7 +21,7 @@ export default function RiskCenter() {
   return (
     <div className="grid" style={{ gap: 14 }}>
       {summary && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 1, background: "var(--line)", border: "1px solid var(--line)" }} className="rise">
+        <div className="cards cards-3 seam rise">
           <Tile label="Portfolio Risk Score" value={summary.riskScore} tone={riskColor} big />
           <Tile label="Total Exposure" value={`$${summary.exposure.toFixed(0)}`} sub={`${Math.round(summary.exposure / (summary.equity || 1) * 100)}% of equity`} />
           <Tile label="Drawdown" value={`${(summary.drawdown * 100).toFixed(2)}%`} tone="var(--amber)" sub={`equity $${summary.equity.toFixed(0)}`} />

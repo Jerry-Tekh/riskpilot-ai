@@ -59,7 +59,7 @@ export default function Autopilot() {
           </button>
         </div>
         {status && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 1, marginTop: 16, background: "var(--line)", border: "1px solid var(--line)" }}>
+          <div className="cards cards-4 seam" style={{ marginTop: 16 }}>
             <Cell label="Status" value={on ? "Running" : "Idle"} tone={on ? "var(--green)" : "var(--muted)"} />
             <Cell label="Cycles Run" value={status.ticks} />
             <Cell label="Uptime" value={`${status.uptimeSec}s`} />

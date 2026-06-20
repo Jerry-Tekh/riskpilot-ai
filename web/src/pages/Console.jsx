@@ -63,7 +63,7 @@ export default function Console() {
             style={{ flex: 1, fontSize: 15 }} />
           <button onClick={() => run()} disabled={busy}>{busy ? "Running…" : "Run Loop ❯"}</button>
         </div>
-        <div style={{ display: "flex", gap: 8, padding: "0 16px 14px" }}>
+        <div style={{ display: "flex", gap: 8, padding: "0 16px 14px", flexWrap: "wrap", alignItems: "center" }}>
           {QUICK.map((q) => (
             <button key={q.sym} className="ghost" onClick={() => { setCommand(q.cmd); run(q.cmd); }} disabled={busy}
               style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "7px 12px" }}>
@@ -84,7 +84,7 @@ export default function Console() {
             <span className="kicker">Market Context · {ctx.symbol}</span>
             <AdapterBadge source={ctx.dataSource} />
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
+          <div className="cards cards-3">
             {SIG.map(([label, s]) => <SignalGauge key={label} label={label} value={s.score} hint={s.label} />)}
           </div>
         </div>
