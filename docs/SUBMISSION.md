@@ -9,17 +9,23 @@
 
 ---
 
-## Track 1 — Project Description (four-part thesis structure)
+## Track 1 — Project Description (four-part structure)
 
 **RiskPilot AI — the autonomous trading agent that decides whether a trade should happen at all.**
 
 **1. Problem.** Autonomous agents that blindly execute signals blow up accounts. The hard part of trading isn't generating entries — it's judgment: position sizing, knowing when an edge is real, and having the discipline to *not* trade. Most "AI trading agents" are a thin wrapper that asks an LLM "buy or sell?", which is non-reproducible and can be talked into a bad trade.
 
-**2. Thesis (core logic).** The most reliable edge is *risk-adjusted selectivity*. RiskPilot separates *decision* from *narration*: a **deterministic engine** makes every call so verdicts are reproducible and auditable, while an LLM only explains them. Its strategy is **adaptive by regime** — trend-follow when trending, mean-revert when ranging, and **stay flat when the market is unclear** — and every candidate trade must survive **seven independent risk vetoes** (score floor, reward:risk, extreme volatility, drawdown breach, portfolio concentration, crowded funding, news blackout). The agent is defined by what it *refuses*.
+**2. Solution & thesis (core logic).** The most reliable edge is *risk-adjusted selectivity*. RiskPilot separates *decision* from *narration*: a **deterministic engine** makes every call so verdicts are reproducible and auditable, while an LLM only explains them. Its strategy is **adaptive by regime** — trend-follow when trending, mean-revert when ranging, and **stay flat when the market is unclear** — and every candidate trade must survive **seven independent risk vetoes** (score floor, reward:risk, extreme volatility, drawdown breach, portfolio concentration, crowded funding, news blackout). The agent is defined by what it *refuses*.
 
 **3. How it works (the loop).** *Perception* pulls live Bitget candle data, computes real RSI/MACD/SMA, and reads the live Fear & Greed index into a structured market context. *Decision* scores the trade deterministically (transparent, itemized waterfall). *Execution* opens a simulated position with risk-based sizing and ATR stop-loss/take-profit. *Risk management* runs continuously — a background monitor auto-closes positions at their stops with no human in the loop, and an **Autopilot** mode runs the whole loop across BTC/ETH/DOGE autonomously. Qwen 3.6 narrates each verdict (and a "Deep Analysis" mode runs full chain-of-thought on demand) but never changes it.
 
-**4. Evidence.** A 90-day backtest run by the *real* engine: ~300 trade events, 54 risk-rejected decisions, autonomous stop-outs, **+8.94% return at 3.6% max drawdown**. The full trade log (timestamp, pair, direction, price, quantity, balance) is exportable as CSV and committed to the repo; the backtest code is open and reproducible. The same risk-first thesis is also published as a **Bitget GetAgent Playbook** ("RiskPilot Adaptive Regime"), backtested on Bitget's own platform.
+**4. My take on AI trading.** I think the industry has the agent thesis backwards. The race is to build agents that find *more* trades, faster — but autonomy without judgment just automates ruin. The thing only an AI agent can do truly well isn't predicting price; it's enforcing discipline without ego, fatigue, or FOMO — applying the exact same risk rules on the 1,000th trade as on the first, and being willing to do nothing. I built RiskPilot to prove that the most valuable autonomous trader is often the one that says *no* the most. As models get stronger, I believe the winning designs will keep the *decision* deterministic and auditable and use the LLM only to explain — because in finance, reproducibility and the ability to reject are worth more than raw predictive flair.
+
+---
+
+### Evidence & results (supporting the trading-log + backtest deliverables)
+
+A 90-day backtest run by the *real* engine: ~300 trade events, 54 risk-rejected decisions, autonomous stop-outs, **+8.94% return at 3.6% max drawdown**. The full trade log (timestamp, pair, direction, price, quantity, balance) is exportable as CSV and committed to the repo (`docs/evidence/trade-log-sample.csv`); the backtest code is open and reproducible (`server/prisma/seed.js`, `server/src/engines/`). The same risk-first thesis is also published as a **Bitget GetAgent Playbook** ("RiskPilot Adaptive Regime"), backtested on Bitget's own platform.
 
 **Bitget modules used:** Bitget market-data API (live perception), Agent Hub (execution), Qwen 3.6 (reasoning), and GetAgent Playbook (published, platform-native backtest).
 
