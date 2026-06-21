@@ -61,10 +61,7 @@ body {
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   background-color: var(--bg);
-  background-image:
-    radial-gradient(1100px 720px at 88% -10%, rgba(15,122,99,.10), transparent 60%),
-    radial-gradient(900px 600px at 2% 108%, rgba(197,137,27,.08), transparent 58%),
-    linear-gradient(180deg, var(--bg), var(--bg-2));
+  background-image: linear-gradient(180deg, var(--bg), var(--bg-2));
   background-attachment: fixed;
 }
 
@@ -157,7 +154,7 @@ tbody tr:hover { background: var(--panel-2); }
 }
 
 /* ---- layout helpers ---- */
-.wrap { max-width: 1240px; margin: 0 auto; padding: 24px 22px 72px; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 24px 22px 72px; position: relative; z-index: 1; }
 .grid { display: grid; gap: 14px; }
 .row { display: flex; gap: 14px; }
 

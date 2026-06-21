@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import TopBar from "./components/TopBar";
+import AnimatedBackground from "./components/AnimatedBackground";
 import Console from "./pages/Console";
 import Autopilot from "./pages/Autopilot";
 import MarketIntel from "./pages/MarketIntel";
@@ -11,6 +12,7 @@ function Shell() {
   const loc = useLocation();
   return (
     <>
+      <AnimatedBackground />
       <TopBar />
       <main className="wrap">
         <AnimatePresence mode="wait">
