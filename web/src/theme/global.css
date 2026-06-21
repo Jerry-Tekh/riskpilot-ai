@@ -23,6 +23,9 @@
   --brand: #0f7a63;        /* pine green — growth, trust */
   --brand-soft: #d7ece4;
   --brand-deep: #0a5a48;
+  --orange: #e2752e;       /* signal orange — risk, energy, the complement of pine */
+  --orange-soft: #f8e7d6;
+  --orange-deep: #c25c18;
   --green: #1f9d6b;        /* APPROVE / long */
   --amber: #c5891b;        /* MODIFY / caution */
   --red: #cc4b3c;          /* REJECT / short */
@@ -80,6 +83,10 @@ a { color: inherit; text-decoration: none; }
 
 .green { color: var(--green); } .red { color: var(--red); } .amber { color: var(--amber); }
 .brand { color: var(--brand); } .dim { color: var(--text-dim); } .muted { color: var(--muted); }
+.orange { color: var(--orange); }
+
+/* warm orange text selection — small touch that threads the accent through the whole app */
+::selection { background: var(--orange-soft); color: var(--orange-deep); }
 
 /* ---- panels / cards ---- */
 .panel {

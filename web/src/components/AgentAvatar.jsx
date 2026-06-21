@@ -55,12 +55,12 @@ export default function AgentAvatar({ size = 40, state = "idle" }) {
         transition={{ duration: thinking ? 0.8 : 2, repeat: Infinity, ease: "easeInOut" }} />
       <circle cx={cx} cy={cy} r="5" fill="#fff" opacity="0.85" />
 
-      {/* orbiting particles */}
+      {/* orbiting particles — signal orange, a constant accent across every state */}
       {!reduce && [0, 120, 240].map((deg, i) => (
         <motion.g key={i} animate={{ rotate: 360 }}
           transition={{ duration: thinking ? 3 : 9, repeat: Infinity, ease: "linear", delay: i * 0.2 }}
           style={{ transformOrigin: "50px 50px" }}>
-          <circle cx="50" cy="14" r="2.6" fill={color}
+          <circle cx="50" cy="14" r="2.6" fill="var(--orange)"
             transform={`rotate(${deg} 50 50)`} />
         </motion.g>
       ))}
