@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { Play, CornerDownLeft } from "lucide-react";
 import { runLoop } from "../api/client";
+import AgentAvatar from "../components/AgentAvatar";
 import LoopSteps from "../components/LoopSteps";
 import VerdictCard from "../components/VerdictCard";
 import DeepAnalysis from "../components/DeepAnalysis";
@@ -47,21 +49,29 @@ export default function Console() {
     ["Sentiment", ctx.sentiment], ["Funding", ctx.funding], ["News", ctx.newsImpact],
   ];
 
+  const avatarState = busy ? "thinking" : result ? result.verdict.toLowerCase() : "idle";
+  const statusText = busy ? "Analyzing the market…" : result ? `Verdict: ${result.verdict} · ${result.symbol}` : error ? "Something went wrong" : "Idle — awaiting your command";
+
   return (
     <div className="grid" style={{ gap: 14 }}>
-      {/* command bar */}
-      <div className="panel ticks rise" style={{ padding: 0 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderBottom: "1px solid var(--line)" }}>
-          <span className="kicker">Agent Console</span>
-          <span className="kicker dim">natural-language command → autonomous loop</span>
+      {/* agent header */}
+      <div className="panel rise" style={{ padding: 0, overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 18px", borderBottom: "1px solid var(--line)", background: "linear-gradient(180deg, var(--brand-soft), transparent)" }}>
+          <AgentAvatar size={54} state={avatarState} />
+          <div style={{ minWidth: 0 }}>
+            <div className="kicker">Agent Console</div>
+            <div className="display" style={{ fontSize: 18, marginTop: 2 }}>{statusText}</div>
+          </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 16px" }}>
-          <span style={{ color: "var(--brand)", fontFamily: "var(--mono)" }}>❯</span>
+          <span style={{ color: "var(--brand)", display: "grid", placeItems: "center" }}><CornerDownLeft size={18} /></span>
           <input value={command} onChange={(e) => setCommand(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && !busy && run()}
             placeholder="e.g. Trade BTC using current conditions"
             style={{ flex: 1, fontSize: 15 }} />
-          <button onClick={() => run()} disabled={busy}>{busy ? "Running…" : "Run Loop ❯"}</button>
+          <button onClick={() => run()} disabled={busy} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+            <Play size={16} fill="currentColor" /> {busy ? "Running…" : "Run Loop"}
+          </button>
         </div>
         <div style={{ display: "flex", gap: 8, padding: "0 16px 14px", flexWrap: "wrap", alignItems: "center" }}>
           {QUICK.map((q) => (

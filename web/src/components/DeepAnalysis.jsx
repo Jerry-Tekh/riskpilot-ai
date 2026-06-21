@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Sparkles } from "lucide-react";
 import { deepAnalysis } from "../api/client";
 
 // Minimal markdown: ## headers + paragraphs. Renders Qwen's structured deep-dive.
@@ -29,7 +30,7 @@ export default function DeepAnalysis({ symbol }) {
   if (state === "idle") {
     return (
       <button className="ghost" onClick={run} style={{ display: "inline-flex", alignItems: "center", gap: 8, alignSelf: "flex-start" }}>
-        <span className="brand">⊹</span> Deep Analysis · Qwen reasoning
+        <Sparkles size={15} /> Deep Analysis · Qwen reasoning
       </button>
     );
   }

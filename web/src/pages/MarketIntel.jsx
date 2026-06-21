@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Newspaper } from "lucide-react";
 import { getMarket } from "../api/client";
 import SignalGauge from "../components/SignalGauge";
 import AdapterBadge from "../components/AdapterBadge";
@@ -68,7 +69,7 @@ export default function MarketIntel() {
             {(ctx.headlines || []).length === 0 && <div className="muted">No headlines.</div>}
             {(ctx.headlines || []).map((h, i) => (
               <div key={i} style={{ display: "flex", gap: 10, padding: "9px 0", borderBottom: "1px solid var(--line)" }}>
-                <span className="brand">▹</span><span style={{ color: "var(--text-dim)" }}>{h}</span>
+                <Newspaper size={15} style={{ color: "var(--brand)", flex: "none", marginTop: 2 }} /><span style={{ color: "var(--text-dim)" }}>{h}</span>
               </div>
             ))}
           </div>

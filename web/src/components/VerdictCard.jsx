@@ -1,5 +1,8 @@
 import { motion } from "motion/react";
+import { CheckCircle2, AlertTriangle, XCircle, PauseCircle, Bot } from "lucide-react";
 import CoinIcon from "./CoinIcon";
+
+const ICON = { APPROVE: CheckCircle2, MODIFY: AlertTriangle, REJECT: XCircle, HOLD: PauseCircle };
 
 const VETO_LABELS = {
   score_floor: "Score below floor",
@@ -37,7 +40,9 @@ export default function VerdictCard({ result }) {
           <CoinIcon symbol={symbol} size={42} />
           <div>
             <div className="kicker">Verdict</div>
-            <div className="display" style={{ fontSize: 32, color: t.c, lineHeight: 1.05 }}>{v}</div>
+            <div className="display" style={{ fontSize: 32, color: t.c, lineHeight: 1.05, display: "flex", alignItems: "center", gap: 9 }}>
+              {ICON[v] && (() => { const I = ICON[v]; return <I size={28} strokeWidth={2.2} />; })()}{v}
+            </div>
           </div>
         </div>
         <div style={{ textAlign: "right" }}>
@@ -66,15 +71,16 @@ export default function VerdictCard({ result }) {
           <div className="kicker" style={{ marginBottom: 8 }}>Risk Vetoes</div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
             {result.vetoes.map((vt) => (
-              <span key={vt} className="pill" style={{ color: "var(--amber)", background: "var(--amber-soft)", border: "1px solid #ecdcb0" }}>⚠ {VETO_LABELS[vt] || vt}</span>
+              <span key={vt} className="pill" style={{ color: "var(--amber)", background: "var(--amber-soft)", border: "1px solid #ecdcb0" }}><AlertTriangle size={13} /> {VETO_LABELS[vt] || vt}</span>
             ))}
           </div>
         </div>
       )}
 
-      <p style={{ marginTop: 14, marginBottom: 0, color: "var(--text-dim)", fontSize: 14, lineHeight: 1.65, borderTop: "1px solid var(--line)", paddingTop: 12 }}>
-        <span className="kicker" style={{ marginRight: 8, color: "var(--brand)" }}>Agent</span>{result.reasoning}
-      </p>
+      <div style={{ marginTop: 14, color: "var(--text-dim)", fontSize: 14, lineHeight: 1.65, borderTop: "1px solid var(--line)", paddingTop: 12, display: "flex", gap: 10 }}>
+        <Bot size={18} style={{ color: "var(--brand)", flex: "none", marginTop: 2 }} />
+        <p style={{ margin: 0 }}>{result.reasoning}</p>
+      </div>
     </motion.div>
   );
 }

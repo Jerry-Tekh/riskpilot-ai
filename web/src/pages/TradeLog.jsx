@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getStats, getTrades, getDecisions, getPortfolioHistory } from "../api/client";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
+import { Download } from "lucide-react";
 import StatBar from "../components/StatBar";
 import CoinIcon from "../components/CoinIcon";
 import { api } from "../api/client";
@@ -25,7 +26,7 @@ export default function TradeLog() {
       <div className="rise" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span className="kicker">Verifiable Evidence · 90-day simulated record</span>
         <a href={`${api.defaults.baseURL}/api/trades/export.csv`} target="_blank" rel="noreferrer">
-          <button className="ghost" style={{ fontSize: 11 }}>⭳ Export trade log (CSV)</button>
+          <button className="ghost" style={{ fontSize: 12, display: "inline-flex", alignItems: "center", gap: 7 }}><Download size={14} /> Export trade log (CSV)</button>
         </a>
       </div>
       <div className="rise"><StatBar stats={stats} /></div>

@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
+import { Power, Cpu, XCircle, Zap, Activity, Settings2, AlertTriangle, Eye } from "lucide-react";
 import { getAutopilot, setAutopilot, getActivity } from "../api/client";
+import AgentAvatar from "../components/AgentAvatar";
 
 const TYPE_STYLE = {
-  decision: { c: "var(--brand)", t: "DECISION" },
-  reject: { c: "var(--red)", t: "REJECT" },
-  execute: { c: "var(--green)", t: "EXECUTE" },
-  monitor: { c: "var(--amber)", t: "MONITOR" },
-  autopilot: { c: "var(--blue)", t: "SYSTEM" },
-  risk: { c: "var(--red)", t: "RISK" },
-  perceive: { c: "var(--text-dim)", t: "PERCEIVE" },
+  decision: { c: "var(--brand)", t: "DECISION", Icon: Cpu },
+  reject: { c: "var(--red)", t: "REJECT", Icon: XCircle },
+  execute: { c: "var(--green)", t: "EXECUTE", Icon: Zap },
+  monitor: { c: "var(--amber)", t: "MONITOR", Icon: Activity },
+  autopilot: { c: "var(--blue)", t: "SYSTEM", Icon: Settings2 },
+  risk: { c: "var(--red)", t: "RISK", Icon: AlertTriangle },
+  perceive: { c: "var(--text-dim)", t: "PERCEIVE", Icon: Eye },
 };
 
 export default function Autopilot() {
@@ -41,21 +44,23 @@ export default function Autopilot() {
   return (
     <div className="grid" style={{ gap: 14 }}>
       {/* control deck */}
-      <div className="panel ticks rise" style={{ borderColor: on ? "var(--green)" : "var(--line)", boxShadow: on ? "0 0 0 1px var(--green), 0 0 50px -22px var(--green)" : undefined }}>
+      <div className="panel rise" style={{ borderColor: on ? "var(--green)" : "var(--line)", boxShadow: on ? "0 0 0 1px var(--green), var(--shadow)" : "var(--shadow-sm)" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
-          <div>
-            <div className="kicker">Autonomous Mode</div>
-            <div className="display" style={{ fontSize: 26, marginTop: 4, color: on ? "var(--green)" : "var(--text-dim)" }}>
-              <span className={`dot ${on ? "live" : ""}`} style={{ background: on ? "var(--green)" : "var(--muted)", boxShadow: on ? "0 0 8px var(--green)" : "none" }} />
-              {on ? "ENGAGED" : "STANDBY"}
-            </div>
-            <div className="dim" style={{ fontSize: 13, marginTop: 6, maxWidth: 520, lineHeight: 1.5 }}>
-              The agent scans BTC · ETH · DOGE on a {status ? status.tickMs / 1000 : 12}s cycle, runs the full perception → decision → execution → risk loop, and trades with no human input. The background monitor closes positions on its own.
+          <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+            <AgentAvatar size={64} state={on ? "thinking" : "idle"} />
+            <div>
+              <div className="kicker">Autonomous Mode</div>
+              <div className="display" style={{ fontSize: 27, marginTop: 2, color: on ? "var(--green)" : "var(--text-dim)" }}>
+                {on ? "Engaged" : "Standby"}
+              </div>
+              <div className="dim" style={{ fontSize: 13, marginTop: 6, maxWidth: 480, lineHeight: 1.5 }}>
+                The agent scans BTC · ETH · DOGE on a {status ? status.tickMs / 1000 : 12}s cycle, runs the full perception → decision → execution → risk loop, and trades with no human input.
+              </div>
             </div>
           </div>
           <button onClick={toggle} disabled={busy}
-            style={on ? { background: "linear-gradient(180deg,var(--red),#b3303d)", borderColor: "var(--red)", boxShadow: "0 0 24px -6px var(--red)" } : {}}>
-            {busy ? "…" : on ? "Disengage" : "Engage Autopilot ❯"}
+            style={{ display: "inline-flex", alignItems: "center", gap: 8, ...(on ? { background: "linear-gradient(180deg,var(--red),#b3303d)", borderColor: "#b3303d" } : {}) }}>
+            <Power size={16} /> {busy ? "…" : on ? "Disengage" : "Engage Autopilot"}
           </button>
         </div>
         {status && (
@@ -79,11 +84,14 @@ export default function Autopilot() {
           {feed.map((e) => {
             const st = TYPE_STYLE[e.type] || TYPE_STYLE.perceive;
             return (
-              <div key={e.id} style={{ display: "flex", gap: 12, padding: "7px 0", borderBottom: "1px solid var(--line)", alignItems: "baseline" }}>
-                <span className="dim" style={{ minWidth: 64 }}>{new Date(e.at).toLocaleTimeString()}</span>
-                <span style={{ color: st.c, minWidth: 78, fontFamily: "var(--display)", fontSize: 10, letterSpacing: ".08em" }}>{st.t}</span>
+              <motion.div key={e.id} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }}
+                style={{ display: "flex", gap: 11, padding: "9px 0", borderBottom: "1px solid var(--line)", alignItems: "center" }}>
+                <span className="dim" style={{ minWidth: 62 }}>{new Date(e.at).toLocaleTimeString()}</span>
+                <span style={{ color: st.c, minWidth: 92, display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "var(--sans)", fontWeight: 600, fontSize: 10.5, letterSpacing: ".06em" }}>
+                  <st.Icon size={14} /> {st.t}
+                </span>
                 <span style={{ color: "var(--text)" }}>{e.message}</span>
-              </div>
+              </motion.div>
             );
           })}
         </div>

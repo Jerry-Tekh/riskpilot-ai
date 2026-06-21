@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { motion } from "motion/react";
+import { Terminal, Bot, LineChart, ShieldAlert, ScrollText } from "lucide-react";
 import Brand from "./Brand";
 import { getHealth, getMetrics } from "../api/client";
 
 const TABS = [
-  { to: "/", label: "Console", end: true },
-  { to: "/autopilot", label: "Autopilot" },
-  { to: "/market", label: "Market" },
-  { to: "/risk", label: "Risk" },
-  { to: "/log", label: "Trade Log" },
+  { to: "/", label: "Console", end: true, Icon: Terminal },
+  { to: "/autopilot", label: "Autopilot", Icon: Bot },
+  { to: "/market", label: "Market", Icon: LineChart },
+  { to: "/risk", label: "Risk", Icon: ShieldAlert },
+  { to: "/log", label: "Trade Log", Icon: ScrollText },
 ];
 
 export default function TopBar() {
@@ -43,10 +44,11 @@ export default function TopBar() {
             const active = t.end ? loc.pathname === "/" : loc.pathname.startsWith(t.to);
             return (
               <NavLink key={t.to} to={t.to} end={t.end}
-                style={{ position: "relative", padding: "10px 16px", whiteSpace: "nowrap",
+                style={{ position: "relative", padding: "10px 14px", whiteSpace: "nowrap",
+                  display: "inline-flex", alignItems: "center", gap: 7,
                   fontFamily: "var(--sans)", fontSize: 14, fontWeight: 600,
                   color: active ? "var(--brand-deep)" : "var(--text-dim)" }}>
-                {t.label}
+                <t.Icon size={16} strokeWidth={2.2} /> {t.label}
                 {active && (
                   <motion.span layoutId="nav-underline"
                     style={{ position: "absolute", left: 12, right: 12, bottom: -1, height: 3, background: "var(--brand)", borderRadius: 3 }}
