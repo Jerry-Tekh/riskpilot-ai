@@ -69,7 +69,7 @@ export default function MarketIntel() {
             {(ctx.headlines || []).length === 0 && <div className="muted">No headlines.</div>}
             {(ctx.headlines || []).map((h, i) => (
               <div key={i} style={{ display: "flex", gap: 10, padding: "9px 0", borderBottom: "1px solid var(--line)" }}>
-                <Newspaper size={15} style={{ color: "var(--brand)", flex: "none", marginTop: 2 }} /><span style={{ color: "var(--text-dim)" }}>{h}</span>
+                <Newspaper size={15} style={{ color: "var(--orange)", flex: "none", marginTop: 2 }} /><span style={{ color: "var(--text-dim)" }}>{h}</span>
               </div>
             ))}
           </div>

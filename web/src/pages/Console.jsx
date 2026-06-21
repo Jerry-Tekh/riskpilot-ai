@@ -56,7 +56,7 @@ export default function Console() {
     <div className="grid" style={{ gap: 14 }}>
       {/* agent header */}
       <div className="panel rise" style={{ padding: 0, overflow: "hidden" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 18px", borderBottom: "1px solid var(--line)", background: "linear-gradient(180deg, var(--brand-soft), transparent)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 18px", borderBottom: "1px solid var(--line)", background: "linear-gradient(180deg, var(--orange-soft), transparent)" }}>
           <AgentAvatar size={54} state={avatarState} />
           <div style={{ minWidth: 0 }}>
             <div className="kicker">Agent Console</div>
@@ -64,7 +64,7 @@ export default function Console() {
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 16px" }}>
-          <span style={{ color: "var(--brand)", display: "grid", placeItems: "center" }}><CornerDownLeft size={18} /></span>
+          <span style={{ color: "var(--orange)", display: "grid", placeItems: "center" }}><CornerDownLeft size={18} /></span>
           <input value={command} onChange={(e) => setCommand(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && !busy && run()}
             placeholder="e.g. Trade BTC using current conditions"

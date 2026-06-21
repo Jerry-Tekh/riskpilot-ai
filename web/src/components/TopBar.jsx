@@ -47,11 +47,11 @@ export default function TopBar() {
                 style={{ position: "relative", padding: "10px 14px", whiteSpace: "nowrap",
                   display: "inline-flex", alignItems: "center", gap: 7,
                   fontFamily: "var(--sans)", fontSize: 14, fontWeight: 600,
-                  color: active ? "var(--brand-deep)" : "var(--text-dim)" }}>
+                  color: active ? "var(--orange-deep)" : "var(--text-dim)" }}>
                 <t.Icon size={16} strokeWidth={2.2} /> {t.label}
                 {active && (
                   <motion.span layoutId="nav-underline"
-                    style={{ position: "absolute", left: 12, right: 12, bottom: -1, height: 3, background: "var(--brand)", borderRadius: 3 }}
+                    style={{ position: "absolute", left: 12, right: 12, bottom: -1, height: 3, background: "var(--orange)", borderRadius: 3 }}
                     transition={{ type: "spring", stiffness: 380, damping: 30 }} />
                 )}
               </NavLink>

@@ -6,7 +6,7 @@ import { deepAnalysis } from "../api/client";
 function render(md) {
   const blocks = md.split("\n").filter((l) => l.trim());
   return blocks.map((line, i) => {
-    if (line.startsWith("## ")) return <div key={i} className="kicker" style={{ color: "var(--brand)", marginTop: i ? 14 : 0, marginBottom: 6 }}>{line.slice(3)}</div>;
+    if (line.startsWith("## ")) return <div key={i} className="kicker" style={{ color: "var(--orange)", marginTop: i ? 14 : 0, marginBottom: 6 }}>{line.slice(3)}</div>;
     if (line.startsWith("#")) return <div key={i} className="display" style={{ fontSize: 15, marginBottom: 8 }}>{line.replace(/^#+\s*/, "")}</div>;
     return <p key={i} style={{ margin: "0 0 8px", color: "var(--text-dim)", fontSize: 13.5, lineHeight: 1.6 }}>{line.replace(/\*\*/g, "")}</p>;
   });

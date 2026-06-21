@@ -34,8 +34,8 @@ function Shell() {
         <footer style={{ marginTop: 32, paddingTop: 18, borderTop: "1px solid var(--line)", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
           <span className="kicker dim">RiskPilot AI · Bitget AI Base Camp Hackathon S1 · risk-first autonomous trading agent</span>
           <span style={{ display: "flex", gap: 16 }}>
-            <a className="kicker" style={{ color: "var(--brand)" }} href="https://github.com/Jerry-Tekh/riskpilot-ai" target="_blank" rel="noreferrer">GitHub ↗</a>
-            <a className="kicker" style={{ color: "var(--brand)" }} href="https://www.bitget.com/en/activity/ai-get-agent/playbook/f843acbc-92db-494d-9af5-1d71b4da95ff" target="_blank" rel="noreferrer">Bitget Playbook ↗</a>
+            <a className="kicker" style={{ color: "var(--orange)" }} href="https://github.com/Jerry-Tekh/riskpilot-ai" target="_blank" rel="noreferrer">GitHub ↗</a>
+            <a className="kicker" style={{ color: "var(--orange)" }} href="https://www.bitget.com/en/activity/ai-get-agent/playbook/f843acbc-92db-494d-9af5-1d71b4da95ff" target="_blank" rel="noreferrer">Bitget Playbook ↗</a>
           </span>
         </footer>
       </main>
