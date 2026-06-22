@@ -96,6 +96,22 @@ async function main() {
       data: { equity: +equity.toFixed(2), exposure: 0, openPositions: openNow, drawdown: +((peak - equity) / peak).toFixed(4), riskScore: 20, createdAt: when },
     });
   }
+
+  // Flatten any positions still open at the end of the window, marked to the final
+  // synthetic price. Without this, production's live monitor would later close these
+  // synthetic positions against REAL market prices and book large phantom losses.
+  const endWhen = new Date(start + 89 * 864e5);
+  for (const p of await prisma.position.findMany({ where: { status: "OPEN" } })) {
+    const px = +prices[p.symbol].toFixed(p.symbol === "DOGEUSDT" ? 5 : 2);
+    const pnl = computePnl(p, px);
+    equity += pnl; peak = Math.max(peak, equity);
+    await prisma.position.update({ where: { id: p.id }, data: { status: "CLOSED", exitPrice: px, exitReason: "backtest window closed", pnl, closedAt: endWhen } });
+    await prisma.trade.create({ data: { positionId: p.id, action: "CLOSE", price: px, size: p.size, reason: "backtest window closed", source: "monitor", createdAt: endWhen } });
+  }
+  // Final snapshot AFTER flattening so the equity curve agrees with the realized trade log.
+  await prisma.portfolioSnapshot.create({
+    data: { equity: +equity.toFixed(2), exposure: 0, openPositions: 0, drawdown: +((peak - equity) / peak).toFixed(4), riskScore: 20, createdAt: new Date(start + 89 * 864e5 + 60000) },
+  });
   console.log("Seed complete. Equity:", equity.toFixed(2));
 }
 

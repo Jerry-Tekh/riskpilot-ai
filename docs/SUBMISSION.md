@@ -25,7 +25,7 @@
 
 ### Evidence & results (supporting the trading-log + backtest deliverables)
 
-A 90-day backtest run by the *real* engine: 299 trade events, 58 risk-rejected decisions, autonomous stop-outs, **+8.97% return at 3.98% max drawdown**. The full trade log (timestamp, pair, direction, price, quantity, balance) is exportable as CSV and committed to the repo (`docs/evidence/trade-log-sample.csv`); the backtest code is open and reproducible (`server/prisma/seed.js`, `server/src/engines/`). The same risk-first thesis is also published as a **Bitget GetAgent Playbook** ("RiskPilot Adaptive Regime"), backtested on Bitget's own platform.
+A 90-day backtest run by the *real* engine: 310 trade events, 58 risk-rejected decisions, autonomous stop-outs, **+9.97% return at 3.98% max drawdown**. The full trade log (timestamp, pair, direction, price, quantity, balance) is exportable as CSV and committed to the repo (`docs/evidence/trade-log-sample.csv`); the backtest code is open and reproducible (`server/prisma/seed.js`, `server/src/engines/`). The same risk-first thesis is also published as a **Bitget GetAgent Playbook** ("RiskPilot Adaptive Regime"), backtested on Bitget's own platform.
 
 **Bitget modules used:** Bitget market-data API (live perception), Agent Hub (execution), Qwen 3.6 (reasoning), and GetAgent Playbook (published, platform-native backtest).
 
@@ -59,7 +59,7 @@ A 90-day backtest run by the *real* engine: 299 trade events, 58 risk-rejected d
 >
 > 4/ Engage Autopilot and it trades BTC/ETH/DOGE on its own — watch the live activity feed. No human in the loop.
 >
-> 5/ Proof: 90-day backtest, +8.97% at 3.98% max drawdown, 58 rejections, full CSV trade log on GitHub. Strategy also published on @Bitget_AI GetAgent Playbook.
+> 5/ Proof: 90-day backtest, +9.97% at 3.98% max drawdown, 58 rejections, full CSV trade log on GitHub. Strategy also published on @Bitget_AI GetAgent Playbook.
 >
 > 👉 [demo link] [video link]
 

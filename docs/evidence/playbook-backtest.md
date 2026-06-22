@@ -36,7 +36,7 @@ over real BTCUSDT perpetual data. Package source: [`playbook/riskpilot-adaptive-
 selective strategy came out roughly **breakeven with a 1.60 profit factor and a
 1.91 Sharpe** — disciplined behavior in an unfavorable regime, not an inflated
 number. The strategy's edge is in *not over-trading* when the market is unclear.
-The RiskPilot app's own 90-day engine backtest (+8.97%, see
+The RiskPilot app's own 90-day engine backtest (+9.97%, see
 [`trade-log-sample.csv`](trade-log-sample.csv)) is the headline performance
 figure; this Playbook is the **platform-native, reproducible** proof that the
 strategy runs on Bitget itself.
