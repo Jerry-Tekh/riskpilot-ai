@@ -27,6 +27,17 @@ export function assessRisk({ ctx, decision, portfolio }) {
   if (ctx.funding.score > THRESHOLDS.crowdedFunding && ctx.trend.score < THRESHOLDS.weakTrend)
     vetoes.push("crowded_funding");
 
+  // Pre-trade conviction checks (run before a position is ever opened)
+  // 1. Confidence gate — the scorer measures signal agreement; a noisy/low-confidence
+  //    read has no reliable edge, so stay flat rather than guess.
+  if (decision.confidence === "Low") vetoes.push("low_confidence");
+  // 2. Short-side conviction guard — a short has unbounded upside risk (a meme coin can
+  //    double against you), so demand strong bearish conviction AND calm volatility to short.
+  const bullishness = (ctx.trend.score + ctx.momentum.score) / 2;
+  if (dir === "SELL" &&
+      (ctx.volatility.score >= THRESHOLDS.shortMaxVol || bullishness > THRESHOLDS.shortConviction))
+    vetoes.push("unconfirmed_short");
+
   // Sizing
   const mult = RISK_SIZING.riskMultiplier[level];
   let maxPositionSize = (portfolio.equity * RISK_SIZING.baseFraction * mult) / ctx.price;
@@ -46,15 +57,15 @@ export function assessRisk({ ctx, decision, portfolio }) {
   }
 
   const hardReject = vetoes.some((v) =>
-    ["score_floor", "poor_reward_risk", "extreme_volatility", "drawdown_breach", "news_blackout", "crowded_funding"].includes(v)
+    ["score_floor", "poor_reward_risk", "extreme_volatility", "drawdown_breach", "news_blackout", "crowded_funding", "unconfirmed_short"].includes(v)
   );
 
   let verdict = "APPROVE";
   if (hardReject) verdict = "REJECT";
-  else if (decision.direction === "HOLD") verdict = "HOLD"; // no directional edge → stay flat
+  else if (decision.direction === "HOLD" || vetoes.includes("low_confidence")) verdict = "HOLD"; // no edge / no conviction → stay flat
   else if (modified) verdict = "MODIFY";
 
-  if (verdict === "HOLD") maxPositionSize = 0; // flat = no position
+  if (verdict === "HOLD" || verdict === "REJECT") maxPositionSize = 0; // flat / rejected = no position
 
   return {
     verdict,

@@ -15,7 +15,7 @@ Most trading agents chase profit. RiskPilot evaluates **trade quality and risk**
 
 ## Why it stands out
 
-- **A risk-first agent that can reject trades.** Seven explicit veto rules (score floor, poor reward:risk, extreme volatility, drawdown breach, concentration, crowded funding, news blackout) — every verdict is auditable, not vibes.
+- **A risk-first agent that can reject trades.** Nine explicit veto rules (score floor, poor reward:risk, extreme volatility, drawdown breach, concentration, crowded funding, news blackout, low signal confidence, unconfirmed-short guard) — every verdict is auditable, not vibes.
 - **Deterministic decision engine + Qwen narration.** The score, verdict, sizing, and SL/TP are computed by pure, reproducible functions. Qwen 3.6 only *explains* the verdict in natural language — it never changes it. That makes backtests meaningful and the agent impossible to talk into a bad trade.
 - **Deep Analysis (on demand).** One click runs Qwen with full chain-of-thought reasoning to produce a structured market deep-dive (Market Read · Signal Breakdown · Risk Assessment · Verdict Rationale) — without slowing the core loop.
 - **Real technical analysis.** RSI, MACD, and SMA-cross are computed from live Bitget candle data, so perception is genuinely analyst-grade, not mocked.
@@ -35,7 +35,7 @@ Most trading agents chase profit. RiskPilot evaluates **trade quality and risk**
 | **Perception** | Pulls trend, momentum, volatility, sentiment, funding, news into a structured `MarketContext` | `adapters/skillHub.js` → `orchestrator.buildContext` |
 | **Decision** | Deterministic weighted model produces Trade Score, Direction, Confidence | `engines/scoring.js` |
 | **Execution** | Approved trades open a simulated position; rejections are logged as evidence | `adapters/agentHub.js` + `engines/simBroker.js` |
-| **Risk Management** | SL/TP, position sizing, 7 veto rules → APPROVE / MODIFY / REJECT; background monitor auto-closes | `engines/risk.js` + `monitor.js` |
+| **Risk Management** | SL/TP, position sizing, 9 veto rules → APPROVE / MODIFY / REJECT; background monitor auto-closes | `engines/risk.js` + `monitor.js` |
 
 ---
 
@@ -117,7 +117,7 @@ cd server && npm test
 
 ## Demo Script (≤3 min)
 
-1. **Trade Log** — open already rich with 90 days of seeded history (instant credibility): ~200 trades, 54 rejections, equity curve, Sharpe, drawdown.
+1. **Trade Log** — open already rich with 90 days of seeded history (instant credibility): ~300 trade events, 58 rejections, equity curve, Sharpe, drawdown.
 2. **Agent Console** — type `Trade BTC using current conditions` → the four loop steps light up → **APPROVE** (green), a position opens with SL/TP and risk-based size.
 3. **Agent Console** — type `Trade ETH` → **MODIFY** (amber): *"It still trades, but cuts the size because the book is already concentrated."*
 4. **Agent Console** — type `Trade DOGE` → verdict card flips to **REJECT** (red) with veto reasons (extreme volatility, crowded funding). *"It just refused a trade — that's the difference."*

@@ -45,7 +45,7 @@ Express API (Railway/Render)
     • Qwen adapter     (reasoning narration)
   Core engines (pure JS, deterministic, unit-tested):
     • Scoring engine (Trade Score, Confidence)
-    • Risk engine    (SL/TP, size, 7 veto rules)
+    • Risk engine    (SL/TP, size, 9 veto rules)
     • Sim broker     (fills, PnL, positions)
   Background Risk Monitor (interval job)
         │ Prisma
@@ -100,7 +100,7 @@ RiskAssessment {
 }
 ```
 
-**Veto rules (7):**
+**Veto rules (9):**
 | Rule | Triggers when | Verdict |
 |---|---|---|
 | Score floor | TradeScore < 50 | REJECT |
@@ -110,6 +110,8 @@ RiskAssessment {
 | Total drawdown breach | account drawdown > threshold | REJECT all new |
 | Crowded funding + weak trend | funding extreme & trend weak | MODIFY / REJECT |
 | **News blackout** | high-impact scheduled event imminent | REJECT / HOLD |
+| Low signal confidence | signal dispersion high (confidence = Low) | HOLD (no edge) |
+| Unconfirmed short | SELL into vol ≥ 75 or weak bearish conviction | REJECT |
 
 → Final verdict: **APPROVE · MODIFY · REJECT**, always with machine-generated reasons.
 
@@ -175,7 +177,7 @@ Background monitor = `setInterval` in the Express process (no separate worker in
 ## 10. Build plan (staged; each stage independently runnable)
 
 - **Stage 0 — Scaffold:** server + web, git init, `.env.example`, `.gitignore`, health endpoint. **Deploy skeleton day 1.**
-- **Stage 1 — Core engines (TDD):** scoring, risk (7 vetoes), sim broker. Unit-tested, no network. Lock first.
+- **Stage 1 — Core engines (TDD):** scoring, risk (9 vetoes), sim broker. Unit-tested, no network. Lock first.
 - **Stage 2 — Adapters + cached fallback:** SkillHub, AgentHub, Qwen behind uniform interface; live→cache fallback; record fixtures.
 - **Stage 3 — Orchestrator + API:** wire loop into `/api/agent/run` + endpoints.
 - **Stage 4 — Background monitor:** interval job, auto-close/reduce, evidence rows.

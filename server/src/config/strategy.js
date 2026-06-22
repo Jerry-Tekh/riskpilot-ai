@@ -16,6 +16,8 @@ export const THRESHOLDS = {
   maxDrawdown: 0.20,       // 20% account drawdown → REJECT all new
   crowdedFunding: 80,      // funding score above + weak trend → MODIFY/REJECT
   weakTrend: 55,
+  shortMaxVol: 75,         // shorts carry unbounded risk: refuse to short when volatility ≥ this (High/Extreme)
+  shortConviction: 40,     // shorts require strong bearish conviction: bullishness must be ≤ this to short
 };
 
 export const RISK_SIZING = {

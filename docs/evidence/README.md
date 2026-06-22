@@ -20,9 +20,12 @@ risk engine** (not hand-written). Columns:
 | `realized_pnl` | realized PnL on CLOSE events |
 | `account_balance` | running account balance after the event |
 
-**Headline result:** starting balance 10,000 USDT → final 10,894 USDT
-(+8.94%) over the 90-day window, with autonomous stop-loss / take-profit closes
-and 54 risk-vetoed (rejected) decisions logged separately.
+**Headline result:** starting balance 10,000 USDT → final 10,896.87 USDT
+(+8.97%) at 3.98% max drawdown over the 90-day window, with autonomous
+stop-loss / take-profit closes and 58 risk-vetoed (rejected) decisions logged
+separately. Note: the risk engine refused every short signal in this window
+(unconfirmed-short guard) — shorting a high-volatility asset carries unbounded
+upside risk, so the agent stays flat unless conviction is strong and volatility calm.
 
 ## Reproduce it
 
