@@ -5,7 +5,6 @@
 > - **GitHub:** https://github.com/Jerry-Tekh/riskpilot-ai
 > - **Trade log (evidence):** https://github.com/Jerry-Tekh/riskpilot-ai/blob/master/docs/evidence/trade-log-sample.csv
 > - **Bitget Playbook:** Published as **"RiskPilot Adaptive Regime"** (v0.0.1) — https://www.bitget.com/en/activity/ai-get-agent/playbook/f843acbc-92db-494d-9af5-1d71b4da95ff · publication + backtest record: [docs/evidence/playbook-backtest.md](evidence/playbook-backtest.md)
-> - **Demo video:** _(add your Twitter/YouTube link)_
 
 ---
 
@@ -41,7 +40,7 @@ A 90-day backtest run by the *real* engine: 310 trade events, 58 risk-rejected d
 >
 > Risk-first autonomous agent — adaptive by regime, 9 veto rules, autonomous stop-outs, fully auditable verdicts. Strategy also published as a Bitget GetAgent Playbook.
 >
-> Powered by @Bitget_AI · live on 👉 [demo link]
+> Powered by @Bitget_AI · code + proof on GitHub 👉 https://github.com/Jerry-Tekh/riskpilot-ai
 
 **Version B — thread (more reach):**
 
@@ -61,7 +60,7 @@ A 90-day backtest run by the *real* engine: 310 trade events, 58 risk-rejected d
 >
 > 5/ Proof: 90-day backtest, +9.97% at 3.98% max drawdown, 58 rejections, full CSV trade log on GitHub. Strategy also published on @Bitget_AI GetAgent Playbook.
 >
-> 👉 [demo link] [video link]
+> 👉 https://github.com/Jerry-Tekh/riskpilot-ai
 
 ---
 
@@ -71,8 +70,8 @@ A 90-day backtest run by the *real* engine: 310 trade events, 58 risk-rejected d
 - [ ] **GitHub repo** — public with complete README ✓ (https://github.com/Jerry-Tekh/riskpilot-ai)
 - [ ] **Live/paper trading log** — `docs/evidence/trade-log-sample.csv` (timestamp, pair, direction, price, quantity, balance ✓) + live `/api/trades/export.csv`
 - [ ] **Backtest report** — code is open (`server/prisma/seed.js`, `server/src/engines/`) + the published Bitget Playbook backtest
-- [ ] **Demo link** — https://riskpilotai.vercel.app (public, no login)
-- [ ] **Demo video** — optional (demo is public); recommended: post to Twitter, ≤3 min, follow `docs/DEMO_SCRIPT.md`
+- [ ] **Demo link (optional)** — https://riskpilotai.vercel.app (public, no login)
+- [x] **Demo video** — not submitting one (demo is public/no-login, so video is optional for Track 1)
 - [ ] **Bitget Playbook** — publish `playbook/riskpilot-adaptive-regime` (see `playbook/PUBLISH.md`) and add the link
 - [ ] **Community post** — quote the official Bitget tweet, tag #BitgetHackathon + @Bitget_AI (Community Impact + Participation awards)
 
